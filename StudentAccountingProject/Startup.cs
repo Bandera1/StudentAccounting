@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,13 +10,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StudentAccountingProject.DB;
 using StudentAccountingProject.DB.IdentityModels;
+using StudentAccountingProject.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace StudentAccountingProject
 {
@@ -31,19 +35,48 @@ namespace StudentAccountingProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
             services.AddControllersWithViews();
 
-            services.AddIdentity< DbUser,IdentityRole >()
-              .AddEntityFrameworkStores<EFDbContext>()
-              .AddDefaultTokenProviders();
+           
             services.AddDbContext<EFDbContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+         
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+            
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ya-xs-scho-napysat"));
+            services.AddIdentity<DbUser, IdentityRole>(options => options.Stores.MaxLengthForKeys = 256)
+                .AddEntityFrameworkStores<EFDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    IssuerSigningKey = signingKey,
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    // set ClockSkew is zero
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
 
             services.AddSwaggerGen(c =>
             {
@@ -64,8 +97,9 @@ namespace StudentAccountingProject
             });
 
             services.AddMediatR(typeof(Startup));
-          
 
+            services.AddSession();
+            services.AddRouting();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,11 +122,12 @@ namespace StudentAccountingProject
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
+            app.UseSession();
             app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
-            app.UseRouting();
 
             //Seeder
             SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);

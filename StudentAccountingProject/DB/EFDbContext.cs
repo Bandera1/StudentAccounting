@@ -16,6 +16,7 @@ namespace StudentAccountingProject.DB
     {
         public EFDbContext(DbContextOptions<EFDbContext> options) : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<BaseProfile> BaseProfiles { get; set; }
@@ -24,5 +25,21 @@ namespace StudentAccountingProject.DB
         public DbSet<Course> Courses { get; set; }
         public DbSet<StudentToCourse> StudentsToCourses { get; set; }
 
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<BaseProfile>()
+                .HasOne(x => x.AdminProfile)
+                .WithOne(x => x.BaseProfile)
+                .HasForeignKey<AdminProfile>(x => x.BaseProfileId);
+
+            builder.Entity<BaseProfile>()
+                .HasOne(x => x.StudentProfile)
+                .WithOne(x => x.BaseProfile)
+                .HasForeignKey<StudentProfile>(x => x.BaseProfileId);
+
+        }
     }
 }

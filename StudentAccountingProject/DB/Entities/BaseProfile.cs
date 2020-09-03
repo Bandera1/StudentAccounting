@@ -11,13 +11,14 @@ namespace StudentAccountingProject.DB.Entities
     public class BaseProfile
     {
         [Key, ForeignKey("User")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Photo { get; set; }
 
-        public virtual StudentProfile ClientProfile { get; set; }
-        public virtual AdminProfile ManagerProfile { get; set; }
+        public virtual StudentProfile StudentProfile { get; set; }
+        public virtual AdminProfile AdminProfile { get; set; }
 
         public virtual DbUser User { get; set; }
     }
