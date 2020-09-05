@@ -38,12 +38,19 @@ namespace StudentAccountingProject
             services.AddMvc();
             services.AddControllersWithViews();
 
-           
+
             services.AddDbContext<EFDbContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 
-         
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("CorsPolicy", builder => builder.WithOrigins("http://localhost:44310")
+            //        .AllowAnyHeader()
+            //        .AllowAnyMethod()
+            //        .AllowCredentials()
+            //        .SetIsOriginAllowed((host) => true));
+            //});
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -52,7 +59,7 @@ namespace StudentAccountingProject
             });
             
             services.AddScoped<IJwtTokenService, JwtTokenService>();
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ya-xs-scho-napysat"));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("a8f5f167f44f4964e6c998dee827110c"));
             services.AddIdentity<DbUser, IdentityRole>(options => options.Stores.MaxLengthForKeys = 256)
                 .AddEntityFrameworkStores<EFDbContext>()
                 .AddDefaultTokenProviders();
@@ -110,6 +117,13 @@ namespace StudentAccountingProject
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+
+            app.UseCors(builder => builder
+                 .AllowAnyHeader()
+                 .AllowAnyMethod()
+                 .SetIsOriginAllowed((host) => true)
+                 .AllowCredentials()
+             );
 
             if (env.IsDevelopment())
             {

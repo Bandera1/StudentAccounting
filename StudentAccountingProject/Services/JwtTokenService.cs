@@ -15,7 +15,7 @@ namespace StudentAccountingProject.Services
 {
     public interface IJwtTokenService
     {
-        string CreateToken(DbUser user);
+        Task<string> CreateToken(DbUser user);
     }
 
     public class JwtTokenService : IJwtTokenService
@@ -30,17 +30,16 @@ namespace StudentAccountingProject.Services
             _userManager = userManager;
             _context = context;
         }
-        public string CreateToken(DbUser user)
+        public async Task<string> CreateToken(DbUser user)
         {
-            var roles = _userManager.GetRolesAsync(user).Result;
+            var roles = await _userManager.GetRolesAsync(user);
             roles = roles.OrderBy(x => x).ToList();
             var query = _context.Users.AsQueryable();
-            var image = user.BaseProfile.Photo;
-            var u = user;
-            if (image == null)
-            {
-                image = _configuration.GetValue<string>("DefaultImage");
-            }
+            //var image = user.BaseProfile.Photo;
+            //if (image == null)
+            //{
+            //    image = _configuration.GetValue<string>("DefaultImage");
+            //}
 
 
             List<Claim> claims = new List<Claim>()
@@ -55,7 +54,7 @@ namespace StudentAccountingProject.Services
             }
 
             //var now = DateTime.UtcNow;
-            var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Ya-xs-scho-napysat"));
+            var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("a8f5f167f44f4964e6c998dee827110c"));
             var signinCredentials = new SigningCredentials(signinKey, SecurityAlgorithms.HmacSha256);
 
             var jwt = new JwtSecurityToken(
