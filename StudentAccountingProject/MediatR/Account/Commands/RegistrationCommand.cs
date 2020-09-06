@@ -52,9 +52,8 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 }
                 else
                 {
-                    var NameRegex = new Regex(@"[aA-Z-z0-9._()\[\]-]{3,15}$");
-
-                    if (!NameRegex.IsMatch(request.Name))
+                    var nameRegex = new Regex(@"^([a-zA-Z]+?)([-\s'][a-zA-Z]+)*?$");
+                    if (!nameRegex.IsMatch(request.Name))
                     {
                         return new RegistrationViewModel { Status = false, ErrorMessage = ("The name must be at least 3 characters long") };
                     }
@@ -66,8 +65,8 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 }
                 else
                 {
-                    var nameANDsurnameREGEX = new Regex(@"[A-Za-z0-9._()\[\]-]{3,15}$");
-                    if (!nameANDsurnameREGEX.IsMatch(request.Surname))
+                    var surnameRegex = new Regex(@"^[a-zA-Z]+$");
+                    if (!surnameRegex.IsMatch(request.Surname))
                     {
                         return new RegistrationViewModel { Status = false, ErrorMessage = ("The surname must be at least 3 characters long") };
                     }
@@ -92,7 +91,6 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     Surname = request.Surname,
                     StudentProfile = student
                 };
-
                 var dbClient = new DbUser
                 {
                     Email = request.Email,
@@ -100,17 +98,21 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     BaseProfile = baseProfile
                 };
 
-                var res = UserManager.CreateAsync(dbClient, request.Password).Result;
-                if (!res.Succeeded)
+                var result = await UserManager.CreateAsync(dbClient, request.Password);
+                if (!result.Succeeded)
                 {
                     return new RegistrationViewModel { Status = false, ErrorMessage = ("The password must contain 8 characters, at least one capital letter") };
                 }
-                res = await UserManager.AddToRoleAsync(dbClient, roleName);
+                result = await UserManager.AddToRoleAsync(dbClient, roleName);
 
-                if (res.Succeeded)
+                if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(dbClient, isPersistent: false);
-                    return new RegistrationViewModel { Status = true, Token = await IJwtTokenService.CreateToken(dbClient) };
+                    return new RegistrationViewModel 
+                    { 
+                        Status = true, 
+                        Token = await IJwtTokenService.CreateToken(dbClient) 
+                    };
                 }
                 return new RegistrationViewModel { Status = false, ErrorMessage = string.Empty };
             }       

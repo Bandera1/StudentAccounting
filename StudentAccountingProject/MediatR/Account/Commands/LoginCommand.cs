@@ -43,9 +43,21 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     return new LoginViewModel
                     {
                         Status = false,
-                        ErrorMessage = "Даний користувач не знайденний"
+                        ErrorMessage = "Email or password is incorrect"
                     };
                 }
+
+                var result = await _signInManager
+                .PasswordSignInAsync(user, request.Password, false, false);
+                if (!result.Succeeded)
+                {
+                    return new LoginViewModel
+                    {
+                        Status = false,
+                        ErrorMessage = "Email or password is incorrect"
+                    };
+                }
+
 
                 var token = await _IJwtTokenService.CreateToken(user);
                 await _signInManager.SignInAsync(user, isPersistent: false);
