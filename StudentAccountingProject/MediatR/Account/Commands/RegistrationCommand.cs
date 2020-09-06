@@ -4,6 +4,7 @@ using StudentAccountingProject.DB;
 using StudentAccountingProject.DB.Entities;
 using StudentAccountingProject.DB.IdentityModels;
 using StudentAccountingProject.Helpers;
+using StudentAccountingProject.MediatR.Account.DTO;
 using StudentAccountingProject.MediatR.Account.ViewModels;
 using StudentAccountingProject.Services;
 using System;
@@ -17,10 +18,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
 {
     public class RegistrationCommand : IRequest<RegistrationViewModel>
     {
-        public string Email { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Password { get; set; }
+        public RegisterDTO RegisterDTO { get; set; }
 
         public class RegistrationCommandHandler : IRequestHandler<RegistrationCommand, RegistrationViewModel>
         {
@@ -40,7 +38,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
             public async Task<RegistrationViewModel> Handle(RegistrationCommand request, CancellationToken cancellationToken)
             {
                 var roleName = ProjectRoles.STUDENT;
-                var userRegisterister = Context.Users.FirstOrDefault(x => x.Email == request.Email);
+                var userRegisterister = Context.Users.FirstOrDefault(x => x.Email == request.RegisterDTO.Email);
                 if (userRegisterister != null)
                 {
                     return new RegistrationViewModel 
@@ -50,14 +48,14 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     };
                 }
 
-                if (string.IsNullOrEmpty(request.Name))
+                if (string.IsNullOrEmpty(request.RegisterDTO.Name))
                 {
                     return new RegistrationViewModel { Status = false, ErrorMessage = ("Name cannot be empty") };
                 }
                 else
                 {
                     var nameRegex = new Regex(@"^([a-zA-Z]+?)([-\s'][a-zA-Z]+)*?$");
-                    if (!nameRegex.IsMatch(request.Name))
+                    if (!nameRegex.IsMatch(request.RegisterDTO.Name))
                     {
                         return new RegistrationViewModel 
                         { 
@@ -66,14 +64,14 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                         };
                     }
                 }
-                if (string.IsNullOrEmpty(request.Surname))
+                if (string.IsNullOrEmpty(request.RegisterDTO.Surname))
                 {
                     return new RegistrationViewModel { Status = false, ErrorMessage = ("Surname cannot be empty") };
                 }
                 else
                 {
                     var surnameRegex = new Regex(@"^[a-zA-Z]+$");
-                    if (!surnameRegex.IsMatch(request.Surname))
+                    if (!surnameRegex.IsMatch(request.RegisterDTO.Surname))
                     {
                         return new RegistrationViewModel 
                         { 
@@ -82,14 +80,14 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                         };
                     }
                 }
-                if (string.IsNullOrEmpty(request.Email))
+                if (string.IsNullOrEmpty(request.RegisterDTO.Email))
                 {
                     return new RegistrationViewModel { Status = false, ErrorMessage = ("Вкажіть пошту.") };
                 }
                 else
                 {
                     var testmail = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-                    if (!testmail.IsMatch(request.Email))
+                    if (!testmail.IsMatch(request.RegisterDTO.Email))
                     {
                         return new RegistrationViewModel { Status = false, ErrorMessage = ("Enter email") };
                     }
@@ -98,18 +96,18 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 StudentProfile student = new StudentProfile();
                 BaseProfile baseProfile = new BaseProfile
                 {
-                    Name = request.Name,
-                    Surname = request.Surname,
+                    Name = request.RegisterDTO.Name,
+                    Surname = request.RegisterDTO.Surname,
                     StudentProfile = student
                 };
                 var dbClient = new DbUser
                 {
-                    Email = request.Email,
-                    UserName = request.Email,
+                    Email = request.RegisterDTO.Email,
+                    UserName = request.RegisterDTO.Email,
                     BaseProfile = baseProfile
                 };
 
-                var result = await UserManager.CreateAsync(dbClient, request.Password);
+                var result = await UserManager.CreateAsync(dbClient, request.RegisterDTO.Password);
                 if (!result.Succeeded)
                 {
                     return new RegistrationViewModel 

@@ -19,25 +19,25 @@ namespace StudentAccountingProject.Controllers.Accounts
             {
                 return BadRequest();
             }
-            try
+            //try
+            //{
+            var res = await Mediator.Send(command);
+            if (res.Status)
             {
-                var res = await Mediator.Send(command);
-                if (res.Status)
-                {
-                    return Ok(res.Token);
-                }
-                else
-                {
-                    return BadRequest(res);
-                }
+                return Ok(res.Token);
             }
-            catch (Exception e)
+            else
             {
-                var res = new RegistrationViewModel { Status = false, ErrorMessage = e.Message };
                 return BadRequest(res);
             }
+            //}
+            //catch (Exception e)
+            //{
+            //    var res = new RegistrationViewModel { Status = false, ErrorMessage = e.Message };
+            //    return BadRequest(res);
+            //}
         }
-    
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginCommand command)
         {
@@ -45,17 +45,17 @@ namespace StudentAccountingProject.Controllers.Accounts
             {
                 return BadRequest();
             }
-           //try
+            //try
             //}
-                var result = await Mediator.Send(command);
-                if (result.Status)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
+            var result = await Mediator.Send(command);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
             //}
             //catch (Exception e)
             //{
