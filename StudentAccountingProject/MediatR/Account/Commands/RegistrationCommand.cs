@@ -43,7 +43,11 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 var userRegisterister = Context.Users.FirstOrDefault(x => x.Email == request.Email);
                 if (userRegisterister != null)
                 {
-                    return new RegistrationViewModel { Status = false, ErrorMessage = ("Email alredy exist") };
+                    return new RegistrationViewModel 
+                    { 
+                        Status = false,
+                        ErrorMessage = ("Email alredy exist")
+                    };
                 }
 
                 if (string.IsNullOrEmpty(request.Name))
@@ -55,10 +59,13 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     var nameRegex = new Regex(@"^([a-zA-Z]+?)([-\s'][a-zA-Z]+)*?$");
                     if (!nameRegex.IsMatch(request.Name))
                     {
-                        return new RegistrationViewModel { Status = false, ErrorMessage = ("The name must be at least 3 characters long") };
+                        return new RegistrationViewModel 
+                        { 
+                            Status = false, 
+                            ErrorMessage = ("The name must be at least 3 characters long")
+                        };
                     }
                 }
-
                 if (string.IsNullOrEmpty(request.Surname))
                 {
                     return new RegistrationViewModel { Status = false, ErrorMessage = ("Surname cannot be empty") };
@@ -68,7 +75,11 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     var surnameRegex = new Regex(@"^[a-zA-Z]+$");
                     if (!surnameRegex.IsMatch(request.Surname))
                     {
-                        return new RegistrationViewModel { Status = false, ErrorMessage = ("The surname must be at least 3 characters long") };
+                        return new RegistrationViewModel 
+                        { 
+                            Status = false, 
+                            ErrorMessage = ("The surname must be at least 3 characters long")
+                        };
                     }
                 }
                 if (string.IsNullOrEmpty(request.Email))
@@ -80,7 +91,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     var testmail = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
                     if (!testmail.IsMatch(request.Email))
                     {
-                        return new RegistrationViewModel { Status = false, ErrorMessage = ("Невірно вказана почта.") };
+                        return new RegistrationViewModel { Status = false, ErrorMessage = ("Enter email") };
                     }
                 }
 
@@ -101,7 +112,11 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 var result = await UserManager.CreateAsync(dbClient, request.Password);
                 if (!result.Succeeded)
                 {
-                    return new RegistrationViewModel { Status = false, ErrorMessage = ("The password must contain 8 characters, at least one capital letter") };
+                    return new RegistrationViewModel 
+                    { 
+                        Status = false, 
+                        ErrorMessage = ("The password must contain 8 characters, at least one capital letter")
+                    };
                 }
                 result = await UserManager.AddToRoleAsync(dbClient, roleName);
 
@@ -114,7 +129,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                         Token = await IJwtTokenService.CreateToken(dbClient) 
                     };
                 }
-                return new RegistrationViewModel { Status = false, ErrorMessage = string.Empty };
+                return new RegistrationViewModel { Status = false, ErrorMessage = "Error" };
             }       
         }
     }

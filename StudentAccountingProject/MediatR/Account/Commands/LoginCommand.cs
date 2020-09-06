@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StudentAccountingProject.DB;
 using StudentAccountingProject.DB.IdentityModels;
+using StudentAccountingProject.MediatR.Account.DTO;
 using StudentAccountingProject.MediatR.Account.ViewModels;
 using StudentAccountingProject.Services;
 using System;
@@ -15,29 +16,26 @@ namespace StudentAccountingProject.MediatR.Account.Commands
 {
     public class LoginCommand : IRequest<LoginViewModel>
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
-
+        public LoginDTO LoginDTO { get; set; }
 
         public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginViewModel>
         {
-            private readonly EFDbContext _context;
-            private readonly UserManager<DbUser> _userManager;
-            private readonly SignInManager<DbUser> _signInManager;
-            private readonly IJwtTokenService _IJwtTokenService;
+            private readonly EFDbContext Context;
+            private readonly UserManager<DbUser> UserManager;
+            private readonly SignInManager<DbUser> SignInManager;
+            private readonly IJwtTokenService IJwtTokenService;
 
-            public LoginCommandHandler(EFDbContext context, UserManager<DbUser> userManager, SignInManager<DbUser> signInManager, IJwtTokenService IJwtTokenService)
+            public LoginCommandHandler(EFDbContext context, UserManager<DbUser> userManager, SignInManager<DbUser> signInManager, IJwtTokenService _IJwtTokenService)
             {
-                _userManager = userManager;
-                _context = context;
-                _signInManager = signInManager;
-                _IJwtTokenService = IJwtTokenService;
+                UserManager = userManager;
+                Context = context;
+                SignInManager = signInManager;
+                IJwtTokenService = _IJwtTokenService;
             }
 
             public async Task<LoginViewModel> Handle(LoginCommand request, CancellationToken cancellationToken)
             {
-
-                var user = _context.Users.FirstOrDefault(x => x.Email == request.Email);
+                var user = Context.Users.FirstOrDefault(x => x.Email == request.LoginDTO.Email);
                 if (user == null)
                 {
                     return new LoginViewModel
@@ -47,8 +45,8 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     };
                 }
 
-                var result = await _signInManager
-                .PasswordSignInAsync(user, request.Password, false, false);
+                var result = await SignInManager
+                .PasswordSignInAsync(user, request.LoginDTO.Password, false, false);
                 if (!result.Succeeded)
                 {
                     return new LoginViewModel
@@ -59,8 +57,8 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 }
 
 
-                var token = await _IJwtTokenService.CreateToken(user);
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                var token = await IJwtTokenService.CreateToken(user);
+                await SignInManager.SignInAsync(user, isPersistent: false);
                 return new LoginViewModel
                 {
                     Status = true,
@@ -68,6 +66,5 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 };
             }
         }
-
     }
 }
