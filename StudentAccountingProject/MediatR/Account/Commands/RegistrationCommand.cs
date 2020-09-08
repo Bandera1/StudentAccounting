@@ -93,8 +93,8 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     }
                 }
 
-                StudentProfile student = new StudentProfile();
-                BaseProfile baseProfile = new BaseProfile
+                var student = new StudentProfile();
+                var baseProfile = new BaseProfile
                 {
                     Name = request.RegisterDTO.Name,
                     Surname = request.RegisterDTO.Surname,
