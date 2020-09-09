@@ -21,5 +21,6 @@ namespace StudentAccountingProject.DB.Entities
         public virtual AdminProfile AdminProfile { get; set; }
 
         public virtual DbUser User { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
     }
 }

@@ -8,11 +8,11 @@ namespace StudentAccountingProject.DB.Helpers
     // Abstract class, for get EFDbContext
     public abstract class BaseMediator
     {
-        public readonly EFDbContext _context;
+        public readonly EFDbContext Context;
 
         public BaseMediator(EFDbContext context)
         {
-            _context = context;
+            Context = context;
         }
     }
 }
