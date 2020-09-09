@@ -21,13 +21,13 @@ namespace StudentAccountingProject.DB
             if (context.Roles.Count() == 0)
             {
                 var roleName = ProjectRoles.ADMIN;
-                var result = await roleManager.CreateAsync(new IdentityRole
+                await roleManager.CreateAsync(new IdentityRole
                 {
                     Name = roleName
                 });
 
                 roleName = ProjectRoles.STUDENT;
-                result = await roleManager.CreateAsync(new IdentityRole
+                await roleManager.CreateAsync(new IdentityRole
                 {
                     Name = roleName
                 });
@@ -62,8 +62,8 @@ namespace StudentAccountingProject.DB
                 };
                 var result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
                 result = userManager.AddToRoleAsync(dbUser, role).Result;
-                context.StudentProfiles.Add(studentProfile);
-                context.SaveChanges();
+                //context.StudentProfiles.Add(studentProfile);
+                //context.SaveChanges();
 
                 //----------------#2-------------------
 
@@ -87,8 +87,8 @@ namespace StudentAccountingProject.DB
                 };
                 result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
                 result = userManager.AddToRoleAsync(dbUser, role).Result;
-                context.StudentProfiles.Add(studentProfile);
-                context.SaveChanges();
+                //context.StudentProfiles.Add(studentProfile);
+                //context.SaveChanges();
             }
         }
 

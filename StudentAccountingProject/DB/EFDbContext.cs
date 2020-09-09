@@ -40,6 +40,10 @@ namespace StudentAccountingProject.DB
                 .WithOne(x => x.BaseProfile)
                 .HasForeignKey<StudentProfile>(x => x.BaseProfileId);
 
+            builder.Entity<StudentProfile>()
+                .HasOne(x => x.BaseProfile)
+                .WithOne(x => x.StudentProfile);
+
             builder.Entity<BaseProfile>()
                 .HasMany<Course>(x => x.Courses);
 

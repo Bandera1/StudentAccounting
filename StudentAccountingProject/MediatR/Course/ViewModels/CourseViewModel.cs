@@ -14,5 +14,6 @@ namespace StudentAccountingProject.MediatR.Course.ViewModels
         public int Rating { get; set; }
         public string DateOfStart { get; set; }
         public string DateOfEnd { get; set; }
+        public bool IsSubscribe { get; set; }
     }
 }

@@ -16,7 +16,12 @@ namespace StudentAccountingProject.Controllers.Student
         [HttpGet("GetAllCourses")]
         public async Task<IActionResult> GetAllCourses()
         {
-            var result = await Mediator.Send(new GetAllCourseQuery());
+            var studentId = User.Claims.ToList()[0].Value;
+
+            var result = await Mediator.Send(new GetAllCourseQuery
+            {
+                DTO = new MediatR.Course.DTO.GetAllCoursesDTO { StudentId = studentId }
+            });
             return Ok(result);
         }
 

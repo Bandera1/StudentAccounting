@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using StudentAccountingProject.DB;
 using StudentAccountingProject.DB.Helpers;
+using StudentAccountingProject.MediatR.Course.DTO;
 using StudentAccountingProject.MediatR.Course.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +14,8 @@ namespace StudentAccountingProject.MediatR.Course.Queries
 {
     public class GetAllCourseQuery : IRequest<ICollection<CourseViewModel>>
     {
+        public GetAllCoursesDTO DTO { get; set; }
+
         public class GetAllCourseQueryHandler : BaseMediator, IRequestHandler<GetAllCourseQuery, ICollection<CourseViewModel>>
         {
             public GetAllCourseQueryHandler(EFDbContext context) : base(context)
@@ -19,8 +23,9 @@ namespace StudentAccountingProject.MediatR.Course.Queries
             }
 
             public async Task<ICollection<CourseViewModel>> Handle(GetAllCourseQuery request, CancellationToken cancellationToken)
-            {
+            {              
                 var courses = Context.Courses
+                 .Where(x => x.Subscribers.Where(b => b.Id == request.DTO.StudentId).Count() == 0)
                  .Select(x => new CourseViewModel
                  {
                      Id = x.Id,
@@ -29,7 +34,9 @@ namespace StudentAccountingProject.MediatR.Course.Queries
                      Description = x.Description,
                      DateOfStart = x.DateOfStart.ToString("dd MMMM yyyy"),
                      DateOfEnd = x.DateOfEnd.ToString("dd MMMM yyyy"),
-                     Rating = Convert.ToInt32(x.Rating)
+                     Rating = Convert.ToInt32(x.Rating),
+                     IsSubscribe = x.Subscribers
+                     .FirstOrDefault(b => b.Id == request.DTO.StudentId) == null ? false : true
                  }).ToList();
 
                 return courses;
