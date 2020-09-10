@@ -6,17 +6,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentAccountingProject.Helpers;
+using StudentAccountingProject.MediatR.Course.Commands;
 using StudentAccountingProject.MediatR.Course.Queries;
+using System.Security.Claims;
 
 namespace StudentAccountingProject.Controllers.Student
 {
-    [Authorize(Roles = "Student")]
+    //[Authorize(Roles = "Student")]
     public class StudentController : ApiController
     {
         [HttpGet("GetAllCourses")]
         public async Task<IActionResult> GetAllCourses()
         {
-            var studentId = User.Claims.ToList()[0].Value;
+            var studentId = User.Identities.First().Claims.First().Value;
 
             var result = await Mediator.Send(new GetAllCourseQuery
             {
@@ -26,9 +28,15 @@ namespace StudentAccountingProject.Controllers.Student
         }
 
         [HttpPost("SubscribeToCourse")]
-        public async Task<IActionResult> SubscribeToCourse()
+        public async Task<IActionResult> SubscribeToCourse([FromBody]SubscribeToCourseCommand command)
         {
-            return Ok();
+            var studentId = User.Identities.First().Claims.First().Value;
+
+            command.DTO.StudentId = studentId;
+            var result = await Mediator.Send(command);
+
+            if (result.Status) return Ok(result);
+            return BadRequest(result);
         }
     }
 }

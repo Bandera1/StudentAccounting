@@ -22,6 +22,6 @@ namespace StudentAccountingProject.DB.Entities
         public DateTime DateOfEnd { get; set; }
 
         public virtual BaseProfile Author { get; set; }
-        public virtual ICollection<BaseProfile> Subscribers { get; set; }
+        //public virtual ICollection<BaseProfile> Subscribers { get; set; }
     }
 }

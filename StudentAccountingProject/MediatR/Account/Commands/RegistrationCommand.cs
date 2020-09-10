@@ -106,6 +106,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     UserName = request.RegisterDTO.Email,
                     BaseProfile = baseProfile
                 };
+                //baseProfile.Courses = new List<DB.Entities.Course>();
 
                 var result = await UserManager.CreateAsync(dbClient, request.RegisterDTO.Password);
                 if (!result.Succeeded)

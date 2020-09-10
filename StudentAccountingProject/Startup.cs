@@ -46,7 +46,7 @@ namespace StudentAccountingProject
 
             //services.AddCors(options =>
             //{
-            //    options.AddPolicy("CorsPolicy", builder => builder.WithOrigins("http://localhost:44310")
+            //    options.AddPolicy("corspolicy", builder => builder.WithOrigins("http://localhost:44310")
             //        .AllowAnyHeader()
             //        .AllowAnyMethod()
             //        .AllowCredentials()

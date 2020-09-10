@@ -25,7 +25,8 @@ namespace StudentAccountingProject.MediatR.Course.Queries
             public async Task<ICollection<CourseViewModel>> Handle(GetAllCourseQuery request, CancellationToken cancellationToken)
             {              
                 var courses = Context.Courses
-                 .Where(x => x.Subscribers.Where(b => b.Id == request.DTO.StudentId).Count() == 0)
+                 //.Where(x => Context.StudentsToCourses.Where(b => b.CourseId == x.Id)
+                 //.Where(z => z.StudentId == request.DTO.StudentId).Count() == 0)
                  .Select(x => new CourseViewModel
                  {
                      Id = x.Id,
@@ -35,8 +36,8 @@ namespace StudentAccountingProject.MediatR.Course.Queries
                      DateOfStart = x.DateOfStart.ToString("dd MMMM yyyy"),
                      DateOfEnd = x.DateOfEnd.ToString("dd MMMM yyyy"),
                      Rating = Convert.ToInt32(x.Rating),
-                     IsSubscribe = x.Subscribers
-                     .FirstOrDefault(b => b.Id == request.DTO.StudentId) == null ? false : true
+                     IsSubscribe = Context.StudentsToCourses.Where(n => n.CourseId == x.Id)
+                     .FirstOrDefault(b => b.StudentId == request.DTO.StudentId) == null ? false : true
                  }).ToList();
 
                 return courses;

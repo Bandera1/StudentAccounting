@@ -60,6 +60,8 @@ namespace StudentAccountingProject.DB
                     UserName = "student1@gmail.com",
                     BaseProfile = baseProfile
                 };
+                //baseProfile.Courses = new List<Course>();
+
                 var result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
                 result = userManager.AddToRoleAsync(dbUser, role).Result;
                 //context.StudentProfiles.Add(studentProfile);
@@ -85,6 +87,8 @@ namespace StudentAccountingProject.DB
                     UserName = "student2@gmail.com",
                     BaseProfile = baseProfile
                 };
+                //baseProfile.Courses = new List<Course>();
+
                 result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
                 result = userManager.AddToRoleAsync(dbUser, role).Result;
                 //context.StudentProfiles.Add(studentProfile);
