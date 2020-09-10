@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace StudentAccountingProject.Controllers.Student
 {
-    //[Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student")]
     public class StudentController : ApiController
     {
         [HttpGet("GetAllCourses")]
@@ -38,5 +38,18 @@ namespace StudentAccountingProject.Controllers.Student
             if (result.Status) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpGet("GetMyCourses")]
+        public async Task<IActionResult> GetMyCourses()
+        {
+            var studentId = User.Identities.First().Claims.First().Value;
+
+            var result = await Mediator.Send(new GetStudentsCoursesQuery
+            {
+                DTO = new MediatR.Course.DTO.GetStudentsCoursesDTO { StudentId = studentId }
+            });
+            return Ok(result);
+        }
+
     }
 }
