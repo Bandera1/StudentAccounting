@@ -23,7 +23,7 @@ namespace StudentAccountingProject.MediatR.Course.Queries
             }
 
             public async Task<ICollection<CourseViewModel>> Handle(GetAllCourseQuery request, CancellationToken cancellationToken)
-            {              
+            {
                 var courses = Context.Courses
                  //.Where(x => Context.StudentsToCourses.Where(b => b.CourseId == x.Id)
                  //.Where(z => z.StudentId == request.DTO.StudentId).Count() == 0)
