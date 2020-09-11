@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using StudentAccountingProject.DB;
 using StudentAccountingProject.DB.Helpers;
+using StudentAccountingProject.MediatR.Account.Commands;
 using StudentAccountingProject.MediatR.Course.DTO;
 using StudentAccountingProject.MediatR.Course.ViewModels;
 using System;
@@ -17,8 +19,11 @@ namespace StudentAccountingProject.MediatR.Course.Commands
 
         public class SubscribeToCourseCommandHandler : BaseMediator, IRequestHandler<SubscribeToCourseCommand, SubscribeCourseViewModel>
         {
-            public SubscribeToCourseCommandHandler(EFDbContext context) : base(context)
+            private readonly IMediator Mediator;
+
+            public SubscribeToCourseCommandHandler(EFDbContext context, IMediator mediator) : base(context)
             {
+                Mediator = mediator;
             }
 
             public async Task<SubscribeCourseViewModel> Handle(SubscribeToCourseCommand request, CancellationToken cancellationToken)
@@ -41,6 +46,19 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                         Status = false,
                         ErrorMessage = "Student does not exist"
                     };
+                }
+                if (!Context.Users.FirstOrDefault(x => x.Id == student.UserId).EmailConfirmed)
+                {
+                    await Mediator.Send(new SendConfirmEmailCommand
+                    {
+                        DTO = new Account.DTO.SendConfirmEmailDTO { UserId = student.UserId }
+                    });
+                    return new SubscribeCourseViewModel
+                    {
+                        Status = false,
+                        ErrorMessage = "Your email is not verified. Go to the email for confirmation."
+                    };
+
                 }
 
                 //if (student.Courses == null) student.Courses = new List<DB.Entities.Course>();

@@ -60,12 +60,10 @@ namespace StudentAccountingProject.DB
                     UserName = "student1@gmail.com",
                     BaseProfile = baseProfile
                 };
-                //baseProfile.Courses = new List<Course>();
+                baseProfile.UserId = dbUser.Id;
 
                 var result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
                 result = userManager.AddToRoleAsync(dbUser, role).Result;
-                //context.StudentProfiles.Add(studentProfile);
-                //context.SaveChanges();
 
                 //----------------#2-------------------
 
@@ -87,12 +85,10 @@ namespace StudentAccountingProject.DB
                     UserName = "student2@gmail.com",
                     BaseProfile = baseProfile
                 };
-                //baseProfile.Courses = new List<Course>();
+                baseProfile.UserId = dbUser.Id;
 
                 result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
                 result = userManager.AddToRoleAsync(dbUser, role).Result;
-                //context.StudentProfiles.Add(studentProfile);
-                //context.SaveChanges();
             }
         }
 

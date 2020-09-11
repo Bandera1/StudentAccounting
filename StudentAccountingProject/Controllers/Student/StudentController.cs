@@ -50,6 +50,5 @@ namespace StudentAccountingProject.Controllers.Student
             });
             return Ok(result);
         }
-
     }
 }

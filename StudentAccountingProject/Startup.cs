@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.MemoryStorage;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -43,17 +45,14 @@ namespace StudentAccountingProject
             services.AddDbContext<EFDbContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddHangfire(config =>
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseDefaultTypeSerializer()
+                .UseMemoryStorage()
+            );
+            services.AddHangfireServer();
 
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("corspolicy", builder => builder.WithOrigins("http://localhost:44310")
-            //        .AllowAnyHeader()
-            //        .AllowAnyMethod()
-            //        .AllowCredentials()
-            //        .SetIsOriginAllowed((host) => true));
-            //});
-
-            // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
@@ -135,7 +134,9 @@ namespace StudentAccountingProject
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IBackgroundJobClient backgroundJobClient)
         {
             app.UseRouting();
             app.UseSession();
@@ -144,6 +145,7 @@ namespace StudentAccountingProject
             app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseHangfireDashboard("/hangfire");
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -169,15 +171,8 @@ namespace StudentAccountingProject
                 app.UseHsts();
             }
 
-          
-          
-
             //Seeder
-            SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);
-
-         
-          
-    
+            SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);             
 
             app.UseEndpoints(endpoints =>
             {
@@ -198,7 +193,9 @@ namespace StudentAccountingProject
                 }
             });
 
-
+            //backgroundJobClient.Enqueue(() => Console.WriteLine("Hello Hangfire job!"));
+            //backgroundJobClient.Schedule(() => Console.WriteLine("Schedule"),new TimeSpan(0,0,0,10));
         }
     }
 }
+ 

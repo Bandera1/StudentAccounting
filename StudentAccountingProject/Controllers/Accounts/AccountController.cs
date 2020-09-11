@@ -14,13 +14,11 @@ namespace StudentAccountingProject.Controllers.Accounts
         [HttpPost("register")]
         public async Task<IActionResult> Registration([FromBody]RegistrationCommand command)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            //try
-            //{
+            
             var res = await Mediator.Send(command);
             if (res.Status)
             {
@@ -29,15 +27,9 @@ namespace StudentAccountingProject.Controllers.Accounts
             else
             {
                 return BadRequest(res);
-            }
-            //}
-            //catch (Exception e)
-            //{
-            //    var res = new RegistrationViewModel { Status = false, ErrorMessage = e.Message };
-            //    return BadRequest(res);
-            //}
+            }          
         }
-
+            
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginCommand command)
         {
@@ -63,5 +55,22 @@ namespace StudentAccountingProject.Controllers.Accounts
             //    return BadRequest(res);
             //}
         }
+
+        [HttpPost("sendConfirmEmail")]
+        public async Task<IActionResult> sendConfirmEmail([FromBody]SendConfirmEmailCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if(result.Status) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpPost("confirmEmail")]
+        public async Task<IActionResult> confirmEmail([FromBody]ConfirmEmailCommand command)
+        {
+            await Mediator.Send(command);
+            return Ok();
+        }
+
     }
 }
