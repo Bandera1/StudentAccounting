@@ -82,7 +82,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 }
                 if (string.IsNullOrEmpty(request.RegisterDTO.Email))
                 {
-                    return new RegistrationViewModel { Status = false, ErrorMessage = ("Вкажіть пошту.") };
+                    return new RegistrationViewModel { Status = false, ErrorMessage = ("Enter email") };
                 }
                 else
                 {
@@ -92,12 +92,29 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                         return new RegistrationViewModel { Status = false, ErrorMessage = ("Enter email") };
                     }
                 }
+                if (string.IsNullOrEmpty(request.RegisterDTO.Age))
+                {
+                    return new RegistrationViewModel { Status = false, ErrorMessage = "Enter age" };
+                }
+                else
+                {
+                    if (Convert.ToInt32(request.RegisterDTO.Age) <= 0)
+                    {
+                        return new RegistrationViewModel
+                        {
+                            Status = false,
+                            ErrorMessage = ("Age cannot be less then 1")
+                        };
+                    }
+                }
 
                 var student = new StudentProfile();
                 var baseProfile = new BaseProfile
                 {
                     Name = request.RegisterDTO.Name,
                     Surname = request.RegisterDTO.Surname,
+                    RegisterDate = DateTime.Now,
+                    Age = request.RegisterDTO.Age,
                     StudentProfile = student,
                 };
                 var dbClient = new DbUser

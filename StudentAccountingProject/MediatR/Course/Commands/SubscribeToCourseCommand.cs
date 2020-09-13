@@ -216,9 +216,7 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                         () => act.Invoke(course.Name, student.Email, 7),
                         new TimeSpan(days, hour, 0, 0));
                     }              
-                }
-                
-
+                }            
 
                 return new SubscribeCourseViewModel { Status = true };
             }          

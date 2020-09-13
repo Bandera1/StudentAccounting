@@ -44,7 +44,9 @@ namespace StudentAccountingProject.DB
                 var baseProfile = new BaseProfile
                 {
                     Name = "Jordan",
-                    Surname = "Montana"
+                    Surname = "Montana",
+                    Age = new Random().Next(18, 56).ToString(),
+                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31))
                 };
 
                 var studentProfile = new StudentProfile
@@ -69,7 +71,9 @@ namespace StudentAccountingProject.DB
                 baseProfile = new BaseProfile
                 {
                     Name = "Black",
-                    Surname = "Water"
+                    Surname = "Water",
+                    Age = new Random().Next(18, 56).ToString(),
+                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31))
                 };
 
                 studentProfile = new StudentProfile
@@ -101,7 +105,9 @@ namespace StudentAccountingProject.DB
                 var baseProfile = new BaseProfile
                 {
                     Name = "Admin",
-                    Surname = "Adminovich"
+                    Surname = "Adminovich",
+                    Age = new Random().Next(18, 56).ToString(),
+                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31))
                 };
 
                 var adminProfile = new AdminProfile

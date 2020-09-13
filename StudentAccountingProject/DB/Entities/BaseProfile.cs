@@ -16,6 +16,8 @@ namespace StudentAccountingProject.DB.Entities
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Photo { get; set; }
+        public string Age { get; set; }
+        public DateTime RegisterDate { get; set; }
         public string UserId { get; set; }
 
         public virtual StudentProfile StudentProfile { get; set; }
