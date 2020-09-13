@@ -34,8 +34,7 @@ namespace StudentAccountingProject.DB
             }
         }
 
-        public async static void SeedStudents(EFDbContext context, UserManager<DbUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public async static void SeedStudents(EFDbContext context, UserManager<DbUser> userManager)
         {
             if (context.BaseProfiles.Where(x => x.StudentProfile != null).Count() == 0)
             {
@@ -88,6 +87,39 @@ namespace StudentAccountingProject.DB
                 baseProfile.UserId = dbUser.Id;
 
                 result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
+                result = userManager.AddToRoleAsync(dbUser, role).Result;
+            }
+        }
+
+        public async static void SeedAdmins(EFDbContext context, UserManager<DbUser> userManager)
+        {
+            if (context.BaseProfiles.Where(x => x.AdminProfile != null).Count() == 0)
+            {
+                var role = ProjectRoles.ADMIN;
+
+                //----------------#1-------------------
+                var baseProfile = new BaseProfile
+                {
+                    Name = "Admin",
+                    Surname = "Adminovich"
+                };
+
+                var adminProfile = new AdminProfile
+                {
+                    BaseProfile = baseProfile,
+                    IsSuperAdmin = true
+                };
+                baseProfile.AdminProfile = adminProfile;
+
+                var dbUser = new DbUser
+                {
+                    Email = "admin@gmail.com",
+                    UserName = "admin@gmail.com",
+                    BaseProfile = baseProfile
+                };
+                baseProfile.UserId = dbUser.Id;
+
+                var result = userManager.CreateAsync(dbUser, "QWerty-1").Result;
                 result = userManager.AddToRoleAsync(dbUser, role).Result;
             }
         }
@@ -184,10 +216,12 @@ namespace StudentAccountingProject.DB
 
                 // Roles: 2
                 // Students: 2
+                // Admin: 1 - SuperAdmin
                 // Courses: 5
 
                 SeederDB.SeedRoles(context, manager, managerRole);
-                SeederDB.SeedStudents(context, manager, managerRole);
+                SeederDB.SeedStudents(context, manager);
+                SeederDB.SeedAdmins(context, manager);
                 SeederDB.SeedCourses(context);
             }
 
