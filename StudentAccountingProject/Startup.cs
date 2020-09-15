@@ -172,7 +172,7 @@ namespace StudentAccountingProject
             }
 
             //Seeder
-            SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);             
+            SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);
 
             app.UseEndpoints(endpoints =>
             {
