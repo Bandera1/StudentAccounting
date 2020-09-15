@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StudentAccountingProject.MediatR.Student.Commands;
 using StudentAccountingProject.MediatR.Student.Queries;
 
 namespace StudentAccountingProject.Controllers.Admin
@@ -21,9 +22,17 @@ namespace StudentAccountingProject.Controllers.Admin
         }
 
         [HttpPost("CreateStudent")]
-        public async Task<IActionResult> CreateStudent()
+        public async Task<IActionResult> CreateStudent([FromBody]CreateStudentCommand command)
         {
-            return Ok();
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await Mediator.Send(command);
+
+            if (result.Status) return Ok(result);
+            return BadRequest(result);
         }
 
         [HttpPost("EditStudent")]

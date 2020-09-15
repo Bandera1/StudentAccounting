@@ -46,67 +46,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                         Status = false,
                         ErrorMessage = ("Email alredy exist")
                     };
-                }
-
-                if (string.IsNullOrEmpty(request.RegisterDTO.Name))
-                {
-                    return new RegistrationViewModel { Status = false, ErrorMessage = ("Name cannot be empty") };
-                }
-                else
-                {
-                    var nameRegex = new Regex(@"^([a-zA-Z]+?)([-\s'][a-zA-Z]+)*?$");
-                    if (!nameRegex.IsMatch(request.RegisterDTO.Name))
-                    {
-                        return new RegistrationViewModel 
-                        { 
-                            Status = false, 
-                            ErrorMessage = ("The name must be at least 3 characters long")
-                        };
-                    }
-                }
-                if (string.IsNullOrEmpty(request.RegisterDTO.Surname))
-                {
-                    return new RegistrationViewModel { Status = false, ErrorMessage = ("Surname cannot be empty") };
-                }
-                else
-                {
-                    var surnameRegex = new Regex(@"^[a-zA-Z]+$");
-                    if (!surnameRegex.IsMatch(request.RegisterDTO.Surname))
-                    {
-                        return new RegistrationViewModel 
-                        { 
-                            Status = false, 
-                            ErrorMessage = ("The surname must be at least 3 characters long")
-                        };
-                    }
-                }
-                if (string.IsNullOrEmpty(request.RegisterDTO.Email))
-                {
-                    return new RegistrationViewModel { Status = false, ErrorMessage = ("Enter email") };
-                }
-                else
-                {
-                    var testmail = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-                    if (!testmail.IsMatch(request.RegisterDTO.Email))
-                    {
-                        return new RegistrationViewModel { Status = false, ErrorMessage = ("Enter email") };
-                    }
-                }
-                if (string.IsNullOrEmpty(request.RegisterDTO.Age))
-                {
-                    return new RegistrationViewModel { Status = false, ErrorMessage = "Enter age" };
-                }
-                else
-                {
-                    if (Convert.ToInt32(request.RegisterDTO.Age) <= 0)
-                    {
-                        return new RegistrationViewModel
-                        {
-                            Status = false,
-                            ErrorMessage = ("Age cannot be less then 1")
-                        };
-                    }
-                }
+                }             
 
                 var student = new StudentProfile();
                 var baseProfile = new BaseProfile
@@ -124,6 +64,19 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     BaseProfile = baseProfile
                 };
                 baseProfile.UserId = dbClient.Id;
+                baseProfile.User = dbClient;
+
+                var userValidator = new UserValidator();
+                var validationResult = userValidator.Validate(baseProfile);
+                if(validationResult.Errors.Count > 1)
+                {
+                    return new RegistrationViewModel
+                    {
+                        Status = false,
+                        ErrorMessage = validationResult.Errors.First().ErrorMessage
+                    };
+                }
+
 
                 var result = await UserManager.CreateAsync(dbClient, request.RegisterDTO.Password);
                 if (!result.Succeeded)

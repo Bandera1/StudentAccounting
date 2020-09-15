@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using MediatR;
@@ -15,7 +17,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StudentAccountingProject.DB;
+using StudentAccountingProject.DB.Entities;
 using StudentAccountingProject.DB.IdentityModels;
+using StudentAccountingProject.Helpers;
 using StudentAccountingProject.Services;
 using System;
 using System.Collections.Generic;
@@ -37,10 +41,9 @@ namespace StudentAccountingProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc().AddFluentValidation();
             services.AddControllersWithViews();
             services.AddTransient<EFDbContext>();
-
 
             services.AddDbContext<EFDbContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -57,7 +60,8 @@ namespace StudentAccountingProject
             {
                 configuration.RootPath = "ClientApp/build";
             });
-            
+
+            services.AddScoped<IValidator<BaseProfile>, UserValidator>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("a8f5f167f44f4964e6c998dee827110c"));
             services.AddIdentity<DbUser, IdentityRole>(options => options.Stores.MaxLengthForKeys = 256)
@@ -135,8 +139,7 @@ namespace StudentAccountingProject
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
-            IWebHostEnvironment env,
-            IBackgroundJobClient backgroundJobClient)
+            IWebHostEnvironment env)   
         {
             app.UseRouting();
             app.UseSession();
@@ -192,9 +195,6 @@ namespace StudentAccountingProject
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-
-            //backgroundJobClient.Enqueue(() => Console.WriteLine("Hello Hangfire job!"));
-            //backgroundJobClient.Schedule(() => Console.WriteLine("Schedule"),new TimeSpan(0,0,0,10));
         }
     }
 }
