@@ -24,6 +24,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                 var students = Context.BaseProfiles.Where(x => x.StudentProfile != null)
                     .Select(x => new GetAllStudentsViewModel
                     {
+                        HashId = x.Id,
                         Name = x.Name,
                         Surname = x.Surname,
                         Age = x.Age,

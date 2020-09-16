@@ -28,7 +28,6 @@ namespace StudentAccountingProject.Controllers.Admin
             {
                 return BadRequest();
             }
-
             var result = await Mediator.Send(command);
 
             if (result.Status) return Ok(result);
@@ -36,9 +35,16 @@ namespace StudentAccountingProject.Controllers.Admin
         }
 
         [HttpPost("EditStudent")]
-        public async Task<IActionResult> EditStudent()
+        public async Task<IActionResult> EditStudent([FromBody]EditStudentCommand command)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var result = await Mediator.Send(command);
+
+            if (result.Status) return Ok(result);
+            return BadRequest(result);
         }
 
         [HttpPost("DeleteStudent")]
