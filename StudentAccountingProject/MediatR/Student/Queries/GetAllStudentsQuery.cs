@@ -21,7 +21,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
 
             public async Task<ICollection<GetAllStudentsViewModel>> Handle(GetAllStudentsQuery request, CancellationToken cancellationToken)
             {
-                var students = Context.BaseProfiles.Where(x => x.StudentProfile != null)
+                var students = Context.BaseProfiles.Where(x => x.StudentProfile != null && !x.IsDeleted)
                     .Select(x => new GetAllStudentsViewModel
                     {
                         HashId = x.Id,

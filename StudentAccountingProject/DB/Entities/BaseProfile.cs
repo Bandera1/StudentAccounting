@@ -10,6 +10,11 @@ namespace StudentAccountingProject.DB.Entities
 {
     public class BaseProfile
     {
+        public BaseProfile()
+        {
+            IsDeleted = false;
+        }
+
         [Key, ForeignKey("User")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
@@ -19,6 +24,7 @@ namespace StudentAccountingProject.DB.Entities
         public string Age { get; set; }
         public DateTime RegisterDate { get; set; }
         public string UserId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual StudentProfile StudentProfile { get; set; }
         public virtual AdminProfile AdminProfile { get; set; }

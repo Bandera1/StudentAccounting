@@ -36,7 +36,7 @@ namespace StudentAccountingProject.MediatR.Course.Commands
 
             public async Task<SubscribeCourseViewModel> Handle(SubscribeToCourseCommand request, CancellationToken cancellationToken)
             {
-                var course = Context.Courses.FirstOrDefault(x => x.Id == request.DTO.CourseId);
+                var course = Context.Courses.FirstOrDefault(x => x.Id == request.DTO.CourseId && !x.IsDeleted);
                 if (course == null)
                 {
                     return new SubscribeCourseViewModel

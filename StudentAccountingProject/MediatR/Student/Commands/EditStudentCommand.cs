@@ -22,11 +22,8 @@ namespace StudentAccountingProject.MediatR.Student.Commands
 
         public class EditStudentCommandHandler : BaseMediator,IRequestHandler<EditStudentCommand, BaseViewModel>
         {
-            private readonly UserManager<DbUser> UserManager;
-
-            public EditStudentCommandHandler( UserManager<DbUser> userManager, EFDbContext context) : base(context)
+            public EditStudentCommandHandler(EFDbContext context) : base(context)
             {
-                UserManager = userManager;
             }
 
             public async Task<BaseViewModel> Handle(EditStudentCommand request, CancellationToken cancellationToken)
@@ -35,7 +32,7 @@ namespace StudentAccountingProject.MediatR.Student.Commands
                     .Include(x => x.BaseProfile)
                     .Where(x => x.BaseProfile.StudentProfile != null)
                     .FirstOrDefault(x => x.Id == request.DTO.Id);
-                if (student == null) return new BaseViewModel { Status = false, ErrorMessage = "Student doesn`t exist" };
+                if (student == null || student.BaseProfile.IsDeleted) return new BaseViewModel { Status = false, ErrorMessage = "Student doesn`t exist" };
 
                 var newUser = new BaseProfile
                 {
@@ -49,7 +46,7 @@ namespace StudentAccountingProject.MediatR.Student.Commands
                 };
                 var userValidator = new UserValidator();
                 var validationResult = userValidator.Validate(newUser);
-                if (validationResult.Errors.Count > 1)
+                if (validationResult.Errors.Count > 0)
                 {
                     return new BaseViewModel
                     {

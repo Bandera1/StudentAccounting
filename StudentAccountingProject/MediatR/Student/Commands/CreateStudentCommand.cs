@@ -51,6 +51,7 @@ namespace StudentAccountingProject.MediatR.Student.Commands
                     RegisterDate = DateTime.Now,
                     Age = request.DTO.Age,
                     StudentProfile = student,
+                    IsDeleted = false,
                 };
                 var dbClient = new DbUser
                 {
@@ -63,7 +64,7 @@ namespace StudentAccountingProject.MediatR.Student.Commands
 
                 var userValidator = new UserValidator();
                 var validationResult = userValidator.Validate(baseProfile);
-                if (validationResult.Errors.Count > 1)
+                if (validationResult.Errors.Count > 0)
                 {
                     return new BaseViewModel
                     {

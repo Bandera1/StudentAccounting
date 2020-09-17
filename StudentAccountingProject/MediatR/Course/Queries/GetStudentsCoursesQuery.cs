@@ -25,7 +25,7 @@ namespace StudentAccountingProject.MediatR.Course.Queries
             {
                 var courses = Context
                     .StudentsToCourses
-                    .Where(x => x.StudentId == request.DTO.StudentId)
+                    .Where(x => x.StudentId == request.DTO.StudentId && !x.Course.IsDeleted)
                     .Select(x => new StudentCoursesViewModels 
                     {
                         Id = x.Id,

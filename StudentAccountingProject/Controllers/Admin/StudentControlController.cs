@@ -48,9 +48,16 @@ namespace StudentAccountingProject.Controllers.Admin
         }
 
         [HttpPost("DeleteStudent")]
-        public async Task<IActionResult> DeleteStudent()
+        public async Task<IActionResult> DeleteStudent([FromBody]DeleteStudentCommand command)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var result = await Mediator.Send(command);
+
+            if (result.Status) return Ok(result);
+            return BadRequest(result);
         }
     }
 }

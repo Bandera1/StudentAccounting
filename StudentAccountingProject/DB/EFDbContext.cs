@@ -33,20 +33,24 @@ namespace StudentAccountingProject.DB
             builder.Entity<BaseProfile>()
                 .HasOne(x => x.AdminProfile)
                 .WithOne(x => x.BaseProfile)
-                .HasForeignKey<AdminProfile>(x => x.BaseProfileId);
+                .HasForeignKey<AdminProfile>(x => x.BaseProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<BaseProfile>()
                 .HasOne(x => x.StudentProfile)
                 .WithOne(x => x.BaseProfile)
-                .HasForeignKey<StudentProfile>(x => x.BaseProfileId);
+                .HasForeignKey<StudentProfile>(x => x.BaseProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<StudentProfile>()
                 .HasOne(x => x.BaseProfile)
-                .WithOne(x => x.StudentProfile);
+                .WithOne(x => x.StudentProfile)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<BaseProfile>()
                 .HasOne(x => x.User)
-                .WithOne(x => x.BaseProfile);
+                .WithOne(x => x.BaseProfile)
+                .OnDelete(DeleteBehavior.Cascade); 
 
             //builder.Entity<BaseProfile>()
             //    .HasMany<Course>(x => x.Courses);

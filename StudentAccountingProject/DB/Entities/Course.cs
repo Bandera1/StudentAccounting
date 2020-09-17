@@ -9,6 +9,11 @@ namespace StudentAccountingProject.DB.Entities
 {
     public class Course
     {
+        public Course()
+        {
+            IsDeleted = false;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
@@ -20,6 +25,7 @@ namespace StudentAccountingProject.DB.Entities
         //public string File { get; set; } 
         public DateTime DateOfStart { get; set; }
         public DateTime DateOfEnd { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual BaseProfile Author { get; set; }
         //public virtual ICollection<BaseProfile> Subscribers { get; set; }
