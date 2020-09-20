@@ -72,5 +72,14 @@ namespace StudentAccountingProject.Controllers.Accounts
             return Ok();
         }
 
+        [HttpPost("facebookLogin")]
+        public async Task<IActionResult> facebookLogin([FromBody]FacebookLoginCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (result.Status) return Ok(result);
+            return BadRequest(result);
+        }
+
     }
 }

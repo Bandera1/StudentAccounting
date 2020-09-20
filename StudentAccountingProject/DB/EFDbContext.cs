@@ -50,13 +50,15 @@ namespace StudentAccountingProject.DB
             builder.Entity<BaseProfile>()
                 .HasOne(x => x.User)
                 .WithOne(x => x.BaseProfile)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
-            //builder.Entity<BaseProfile>()
-            //    .HasMany<Course>(x => x.Courses);
+            builder.Entity<Course>()
+                .Property(b => b.IsDeleted)
+                .HasDefaultValue(false);
 
-            //builder.Entity<Course>()
-            //    .HasMany<BaseProfile>(x => x.Subscribers);
+            builder.Entity<BaseProfile>()
+                .Property(b => b.IsDeleted)
+                .HasDefaultValue(false);
 
             builder.Entity<Course>()
                 .HasOne<BaseProfile>(x => x.Author);
