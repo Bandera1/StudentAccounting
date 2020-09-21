@@ -4,14 +4,30 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 // import { createBrowserHistory } from 'history';
 import createHistory from 'history/createHashHistory';
 
+
+//reducers
+import { loginReducer } from '../views/othersViews/LoginPage/reducer';
+import { registerReducer } from '../views/othersViews/RegisterPage/reducer';
+import { GetAllCoursesReducer } from '../views/studentsViews/AllCorses/reducer';
+import { GetStudentsCoursesReducer } from '../views/studentsViews/MyCourses/reducer';
+import { ConfirmEmailReducer } from '../views/othersViews/ConfirmEmail/reducer';
+import { AllStudentsReducer } from '../views/adminViews/AllStudents/reducer'
+
+
+
+
 // Create browser history to use in the Redux store
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 export const history = createHistory({ basename: baseUrl });
 
 export default function configureStore(history, initialState) {
     const reducers = {
-
-      
+        login: loginReducer,  
+        register: registerReducer,
+        getAllCourses: GetAllCoursesReducer,
+        studentsCourses: GetStudentsCoursesReducer,
+        confirmEmail: ConfirmEmailReducer,
+        AllStudents: AllStudentsReducer,
     };
 
     const middleware = [

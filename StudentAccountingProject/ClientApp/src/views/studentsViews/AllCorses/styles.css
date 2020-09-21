@@ -1,0 +1,13 @@
+.container{
+    width: 100%;
+    height: auto;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-flow: wrap;
+}
+
+body{
+    background-color: #dcdde1;
+}

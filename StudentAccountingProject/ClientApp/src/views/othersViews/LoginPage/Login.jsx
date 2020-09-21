@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
-    Button, Card, CardBody, CardFooter, CardGroup,
+    Button, Card, CardBody, CardGroup,
     Col, Container, Form, Input, InputGroup,
     InputGroupAddon, InputGroupText, Row
 } from 'reactstrap';
 import classnames from 'classnames';
-
+import get from "lodash.get";
+import { connect } from "react-redux";
+import * as loginActions from './reducer';
+import { Dimmer, Loader } from 'semantic-ui-react'
+import FacebookAuth from '../../../components/FacebookAuth'
+import 'semantic-ui-css/semantic.min.css'
 
 class Login extends Component {
     state = {
@@ -17,18 +22,21 @@ class Login extends Component {
         done: false,
         isLoading: false,
         visible: false,
-        errorsServer: {}
+        errorServer: {}
     }
+
+    componentWillMount = () => {
+        this.props.logout();
+    };
 
     passwordVisible = (e) => {
         this.setState({
             visible: !this.state.visible,
         });
     }
-
+    
     static getDerivedStateFromProps(nextProps, prevState) {
-
-        return { isLoading: nextProps.loading, errorsServer: nextProps.errors };
+        return { isLoading: nextProps.loginReducer.post.loading, errorServer: nextProps.loginReducer.post.error };
     }
 
     setStateByErrors = (name, value) => {
@@ -55,24 +63,23 @@ class Login extends Component {
     onSubmitForm = (e) => {
         e.preventDefault();
         const { email, password } = this.state;
-
-
-
         let errors = {};
 
-        if (email === '') errors.email = "Поле є обов'язковим";
+        if (email === '') errors.email = "Enter email";
 
 
-        if (password === '') errors.password = "Поле є обов'язковим";
+        if (password === '') errors.password = "Enter password";
 
         const isValid = Object.keys(errors).length === 0
         if (isValid) {
             this.setState({ isLoading: true });
             const model = {
-                email: email,
-                password: password
+                loginDTO: {
+                    email: email,
+                    password: password
+                }        
             };
-
+            console.log("Login model - ",model);
             this.props.login(model, this.props.history);
         }
         else {
@@ -81,12 +88,14 @@ class Login extends Component {
     }
 
     render() {
-
-        const { errors, loading, visible, errorsServer } = this.state;
+        const { errors, isLoading, visible, errorServer } = this.state;
         const form = (
 
             <div className="app flex-row">
-                {/* {loading && <Loader />} */}
+                {isLoading && <Dimmer  active>
+                    <Loader style={{ maxHeight: "100vh" }}>Loading</Loader>
+                </Dimmer>}
+                
                 <Container>
                     <Row className="justify-content-center mt-5">
                         <Col md="6">
@@ -94,8 +103,12 @@ class Login extends Component {
                                 <Card className="p-3">
                                     <CardBody>
                                         <Form onSubmit={this.onSubmitForm}>
-                                            <h1>Вхід</h1>
-                                            <p className="text-muted">Увійдіть до свого облікового запису</p>
+                                            {!!errorServer ?
+                                                <div className="alert alert-danger">
+                                                    {errorServer}.
+                                            </div> : ""}
+                                            <h1>Sign in</h1>
+                                            <p className="text-muted">Sign in your account</p>
 
 
                                             <InputGroup className="mb-2">
@@ -105,7 +118,7 @@ class Login extends Component {
                                                     placeholder="Електронна пошта"
                                                     className={classnames("form-control", { "is-invalid": !!errors.email })}
                                                     id="email"
-                                                    autocomplete="new-password"
+                                                    autoComplete="new-password"
                                                     name="email"
                                                     value={this.state.email}
                                                     onChange={this.handleChange}
@@ -139,21 +152,23 @@ class Login extends Component {
                                             </InputGroup>
                                             <div className="d-flex justify-content-center">
                                                 <div className="p-2 bd-highlight">
-                                                    <Button color="primary" className="px-3">Вхід</Button>
+                                                    <Button color="primary" className="px-3">Enter</Button>
                                                 </div>
 
                                                 <div className="p-2 bd-highlight">
                                                     <Link to="/register">
-                                                        <Button color="primary" className="px-3">Реєстрація</Button>
+                                                        <Button color="primary" className="px-3">Sign up</Button>
                                                     </Link>
                                                 </div>
+                                              
                                             </div>
-                                            <Col xs="5">
-                                                <Link to="/forgot-password">
-                                                    <Button color="link" className="px-0">Забули пароль?</Button>
-                                                </Link>
-                                            </Col>
-
+                                            <div className="d-flex justify-content-center">
+                                                <div className="p-2 bd-highlight">
+                                                    <FacebookAuth login={this.props.facebookLogin} history={this.props.history}/>
+                                                </div>                                             
+                                            </div>
+                                            {/* <Col xs="5" style={{maxWidth:"50%"}}>
+                                            </Col> */}
                                         </Form>
                                     </CardBody>
                                 </Card>
@@ -170,4 +185,24 @@ class Login extends Component {
     }
 }
 
-export default Login;
+// GetReducerData
+function mapStateToProps(state) {
+    console.log('mapStateToProps', state)
+    return {
+        loginReducer: get(state, 'login'),
+    };
+}
+
+const mapDispatch = {
+    login: (model, history) => {
+        return loginActions.login(model, history);
+    },
+    facebookLogin: (model) => {
+        return loginActions.facebookLogin(model);
+    },
+    logout: () => {
+        return loginActions.logout();
+    }
+}
+
+export default connect(mapStateToProps, mapDispatch)(Login);
