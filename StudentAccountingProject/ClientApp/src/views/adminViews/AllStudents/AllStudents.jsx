@@ -49,6 +49,11 @@ class AllStudents extends Component {
             globalFilter: null,
             isLoadingPage:false,
 
+            loading:false,
+            first: 0,
+            totalRecords: 0,
+            rows:4,
+
             isStudentCreateSuccess: false,
             isStudentEditSuccess: false,
             isStudentDeleteSuccess: false,
@@ -85,7 +90,8 @@ class AllStudents extends Component {
 
 
     componentDidMount = () => {
-        this.updateStudents();
+        this.props.GetStudentsCount();
+        setTimeout(x => { this.initStudents();},600)
     };
 
     componentWillReceiveProps = (nextProps) => {
@@ -93,7 +99,9 @@ class AllStudents extends Component {
         console.log("Next props",nextProps);
         this.setState({
             Students: nextProps.studentReducer.getStudents.students,
-            isLoadingPage: nextProps.studentReducer.getStudents.loading,
+            loading: nextProps.studentReducer.getStudents.loading,
+
+            totalRecords: nextProps.studentReducer.getCount.count,
 
             //------StudentCreate
             isStudentCreateSuccess: nextProps.studentReducer.createStudent.success,
@@ -112,8 +120,18 @@ class AllStudents extends Component {
         });
     }
 
-    updateStudents = () => {
-        this.props.GetAllStudents();
+    initStudents = () => {
+        const {first,rows} = this.state;
+        if(this.state.totalRecords >= this.state.rows)
+        {
+            this.updateStudents(first,first+rows);
+        } else {
+            this.updateStudents(0, this.state.totalRecords);
+        }
+    }
+
+    updateStudents = (from,to) => {
+        this.props.GetAllStudents(from, to);
     }
 
     openNew() {
@@ -318,12 +336,21 @@ class AllStudents extends Component {
         );
     }
 
+    onPage(event){       
+        const { first, rows } = event;
+        const {totalRecords} = this.state;
+
+        console.log(`From ${first} To ${first + (totalRecords - first)}`);
+        this.updateStudents(first, first + (totalRecords - first));
+        this.setState({first});
+    }
+
 //-----------------------TOASTS------------------------------
     //-------CreateStudent
     createStudentSuccessToast = () => {
         this.props.ClearState();
         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Student Created', life: 3000 });
-        this.updateStudents();       
+        window.location.reload();
     }
 
     createStudentFailedToast = () => {
@@ -335,7 +362,7 @@ class AllStudents extends Component {
     editStudentSuccessToast = () => {
         this.props.ClearState();
         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Student updated', life: 3000 });
-        this.updateStudents();       
+        window.location.reload();
     }
     editStudentFailedToast = () => {
         this.props.ClearState();
@@ -346,7 +373,7 @@ class AllStudents extends Component {
     deleteStudentSuccessToast = () => {
         this.props.ClearState();
         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Deleted', life: 3000 });
-        this.updateStudents();
+        window.location.reload();
     }
     deleteStudentFailedToast = () => {
         this.props.ClearState();
@@ -393,19 +420,25 @@ class AllStudents extends Component {
 
         return (       
             <div className="datatable-crud-demo p-3">
-                {this.state.isLoadingPage && <Dimmer active>
+                {/* {this.state.isLoadingPage && <Dimmer active>
                     <Loader style={{ maxHeight: "100vh" }}>Loading</Loader>
-                </Dimmer>}
+                </Dimmer>} */}
                 <Toast ref={(el) => this.toast = el} />
 
                 <div className="card">
                     <Toolbar className="p-mb-4" left={this.leftToolbarTemplate} right={this.rightToolbarTemplate}></Toolbar>
 
-                    <DataTable ref={(el) => this.dt = el} value={this.state.Students} selection={this.state.selectedStudents} onSelectionChange={(e) => this.setState({ selectedStudents: e.value })}
-                        dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} students"
-                        globalFilter={this.state.globalFilter}
+                    <DataTable ref={(el) => this.dt = el} 
+                        loading={this.state.loading}
+                        lazy first={this.state.first}
+                        totalRecords={this.state.totalRecords}     
+                        value={this.state.Students} 
+                        selection={this.state.selectedStudents} 
+                        onPage={e => this.onPage(e)}
+                        onSelectionChange={(e) => this.setState({ selectedStudents: e.value })}
+                        dataKey="id" paginator rows={this.state.rows}
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                        globalFilter={this.state.globalFilter}             
                         header={header}>
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
@@ -471,8 +504,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        GetAllStudents: () => {
-            dispatch(reducer.GetAllStudents());
+        GetStudentsCount: () => {
+            dispatch(reducer.GetStudentsCount());
+        },
+        GetAllStudents: (from,to) => {
+            dispatch(reducer.GetAllStudents(from,to));
         },
         CreateStudent: (model) => {
             dispatch(reducer.CreateStudent(model));

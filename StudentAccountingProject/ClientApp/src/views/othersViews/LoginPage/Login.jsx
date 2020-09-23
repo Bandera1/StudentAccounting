@@ -115,7 +115,7 @@ class Login extends Component {
                                                 <span className="input-group-text" id="basic-addon1">@</span>
                                                 <Input
                                                     type="text"
-                                                    placeholder="Електронна пошта"
+                                                    placeholder="Email"
                                                     className={classnames("form-control", { "is-invalid": !!errors.email })}
                                                     id="email"
                                                     autoComplete="new-password"
@@ -137,7 +137,7 @@ class Login extends Component {
                                                     type={classnames(visible ? "text" : "password")}
                                                     id="password"
                                                     name="password"
-                                                    placeholder="Пароль"
+                                                    placeholder="Password"
                                                     autoComplete="current-password"
                                                     onChange={this.handleChange} />
                                                 <InputGroupAddon addonType="append">

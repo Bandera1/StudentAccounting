@@ -1,6 +1,10 @@
 import update from "../../../utils/update";
 import AllStudentsService from "./AllStudentsService";
 
+export const GET_COUNT_STARTED = "GET_COUNT_STARTED";
+export const GET_COUNT_SUCCESS = "GET_COUNT_SUCCESS";
+export const GET_COUNT_FAILED = "GET_COUNT_FAILED";
+
 export const GET_STUDENTS_STARTED = "GET_STUDENTS_STARTED";
 export const GET_STUDENTS_SUCCESS = "GET_STUDENTS_SUCCESS";
 export const GET_STUDENTS_FAILED = "GET_STUDENTS_FAILED";
@@ -20,6 +24,13 @@ export const DELETE_STUDENT_FAILED = "DELETE_STUDENT_FAILED";
 export const CLEAR_STATE = "CLEAR_STATE";
 
 const initialState = {
+    getCount:{
+        loading: false,
+        success: false,
+        failed: false,
+        error: '',
+        count: 0,
+    },
     getStudents: {
         loading: false,
         success: false,
@@ -47,11 +58,25 @@ const initialState = {
     }
 };
 
+export function GetStudentsCount() {
+    return (dispatch) => {
+        dispatch(getStudentsCountListActions.started());
+        AllStudentsService.GetStudentsCount()
+            .then((response) => {
+                console.log("Get student count", response);
+                dispatch(getStudentsCountListActions.success(response.data));
+            }, err => { throw err; })
+            .catch(err => {
+                dispatch(getStudentsCountListActions.failed(err));
+            });
+    }
+}
 
-export function GetAllStudents() {
+export function GetAllStudents(from,to) {
+    console.log("GET STUDENTS!!");
     return (dispatch) => {
         dispatch(getAllStudentsListActions.started());
-        AllStudentsService.GetAllStudents()
+        AllStudentsService.GetAllStudents(from,to)
             .then((response) => {
                 console.log("GetAllStudents", response);
                 dispatch(getAllStudentsListActions.success(response.data));
@@ -111,6 +136,27 @@ export function ClearState() {
 }
 
 
+
+export const getStudentsCountListActions = {
+    started: () => {
+        return {
+            type: GET_COUNT_STARTED
+        }
+    },
+    success: (response) => {
+        return {
+            type: GET_COUNT_SUCCESS,
+            payload: response.studentsCount
+        }
+    },
+    failed: (error) => {
+        return {
+            type: GET_COUNT_FAILED,
+            errors: error
+        }
+    }
+}
+
 export const getAllStudentsListActions = {
     started: () => {
         return {
@@ -120,13 +166,13 @@ export const getAllStudentsListActions = {
     success: (response) => {
         return {
             type: GET_STUDENTS_SUCCESS,
-            payload: response
+            payload: response.students
         }
     },
     failed: (error) => {
         return {
             type: GET_STUDENTS_FAILED,
-            errors: error
+            errors: error.errorMessage
         }
     }
 }
@@ -199,11 +245,34 @@ export const clearStateListActions = {
 export const AllStudentsReducer = (state = initialState, action) => {
     let newState = state;
     switch (action.type) {
+        //-------------------GET STUDENT COUNT------------------
+        case GET_COUNT_STARTED: {
+            newState = update.set(state, "getCount.loading", true);
+            newState = update.set(newState, "getCount.success", false);
+            newState = update.set(newState, "getCount.errorMessage", '');
+            newState = update.set(newState, "getCount.failed", false);
+            break;
+        }
+        case GET_COUNT_SUCCESS: {
+            newState = update.set(state, "getCount.loading", false);
+            newState = update.set(newState, "getCount.failed", false);
+            newState = update.set(newState, "getCount.success", true);
+            newState = update.set(newState, "getCount.count", action.payload);
+            break;
+        }
+        case GET_COUNT_FAILED: {
+            newState = update.set(state, "getCount.loading", false);
+            newState = update.set(newState, "getCount.success", false);
+            newState = update.set(newState, "getCount.errorMessage", action.errors);
+            newState = update.set(newState, "getCount.failed", true);
+            break;
+        }
+
         //-------------------GET STUDENT------------------------
         case GET_STUDENTS_STARTED: {
             newState = update.set(state, "getStudents.loading", true);
             newState = update.set(newState, "getStudents.success", false);
-            newState = update.set(newState, "getStudents.errors", {});
+            newState = update.set(newState, "getStudents.errorMessage", '');
             newState = update.set(newState, "getStudents.failed", false);
             break;
         }
@@ -217,7 +286,7 @@ export const AllStudentsReducer = (state = initialState, action) => {
         case GET_STUDENTS_FAILED: {
             newState = update.set(state, "getStudents.loading", false);
             newState = update.set(newState, "getStudents.success", false);
-            newState = update.set(newState, "getStudents.errors", action.errors);
+            newState = update.set(newState, "getStudents.errorMessage", action.errors);
             newState = update.set(newState, "getStudents.failed", true);
             break;
         }

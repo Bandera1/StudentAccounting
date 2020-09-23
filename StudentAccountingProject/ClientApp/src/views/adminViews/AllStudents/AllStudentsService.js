@@ -2,8 +2,11 @@ import axios from "axios";
 import { serverUrl } from '../../../config';
 
 export default class AllStudentsService {
-    static GetAllStudents() {
-        return axios.get(`${serverUrl}api/studentControl/GetAllStudents`)
+    static GetStudentsCount() {
+        return axios.get(`${serverUrl}api/studentControl/GetStudentsCount`)
+    };
+    static GetAllStudents(from,to) {
+        return axios.get(`${serverUrl}api/studentControl/GetAllStudents/${from}/${to}`)
     };
     static CreateStudent(model) {
         return axios.post(`${serverUrl}api/studentControl/CreateStudent`,model)

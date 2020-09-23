@@ -10,15 +10,31 @@ using StudentAccountingProject.MediatR.Student.Queries;
 
 namespace StudentAccountingProject.Controllers.Admin
 {
-    [Authorize(Roles ="Admin")]
+    //[Authorize(Roles ="Admin")]
     public class StudentControlController : ApiController
     {
-        [HttpGet("GetAllStudents")]
-        public async Task<IActionResult> GetAllStudents()
+        [HttpGet("GetStudentsCount")]
+        public async Task<IActionResult> GetStudentsCount()
         {
-            var result = await Mediator.Send(new GetAllStudentsQuery());
+            var result = await Mediator.Send(new GetStudentsCountQuery());
 
             return Ok(result);
+        }
+
+        [HttpGet("GetAllStudents/{from}/{to}")]
+        public async Task<IActionResult> GetAllStudents(int from, int to)
+        {
+            var result = await Mediator.Send(new GetAllStudentsQuery 
+            {
+                DTO = new MediatR.Student.DTO.GetAllStudentsDTO
+                {
+                    From = from,
+                    To = to
+                }
+            });
+
+            if (result.Status) return Ok(result);
+            return BadRequest(result);
         }
 
         [HttpPost("CreateStudent")]
@@ -59,5 +75,6 @@ namespace StudentAccountingProject.Controllers.Admin
             if (result.Status) return Ok(result);
             return BadRequest(result);
         }
+
     }
 }
