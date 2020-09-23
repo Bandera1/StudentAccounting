@@ -91,7 +91,7 @@ class AllStudents extends Component {
 
     componentDidMount = () => {
         this.props.GetStudentsCount();
-        setTimeout(x => { this.initStudents();},600)
+        setTimeout(x => { this.initStudents();},1000)
     };
 
     componentWillReceiveProps = (nextProps) => {
