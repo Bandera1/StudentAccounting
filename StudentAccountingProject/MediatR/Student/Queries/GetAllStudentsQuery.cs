@@ -36,8 +36,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                     Status = true,
                     Students = students
                 };
-            }
-            
+            }        
 
             private GetAllStudentsViewModel StudentValidation(GetAllStudentsDTO DTO)
             {
@@ -53,7 +52,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                         ErrorMessage = validationResult.Errors.First().ErrorMessage
                     };
                 }
-                return new GetAllStudentsViewModel { Status = false };
+                return new GetAllStudentsViewModel { Status = true };
             }
 
             private List<GetAllStudentInner> GetStudents(int from,int to)
