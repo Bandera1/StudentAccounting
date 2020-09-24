@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace StudentAccountingProject.MediatR.Student.ViewModels
 {
-    public class GetAllStudentInner
+    public class StudentItem
     {
-        public string HashId { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -18,10 +17,9 @@ namespace StudentAccountingProject.MediatR.Student.ViewModels
     }
 
 
-    public class GetAllStudentsViewModel
+    public class StudentsModel
     {
-        public bool Status { get; set; }
         public string ErrorMessage { get; set; }
-        public ICollection<GetAllStudentInner> Students { get; set; }
+        public ICollection<StudentItem> Students { get; set; }
     }
 }

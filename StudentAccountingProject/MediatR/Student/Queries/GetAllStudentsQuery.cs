@@ -15,73 +15,67 @@ using System.Threading.Tasks;
 
 namespace StudentAccountingProject.MediatR.Student.Queries
 {
-    public class GetAllStudentsQuery : IRequest<GetAllStudentsViewModel>
+    public class GetAllStudentsQuery : IRequest<StudentsModel>
     {
-        public GetAllStudentsDTO DTO { get; set; }
+        public PagginationModel paggination { get; set; }
 
-        public class GetAllStudentsQueryHandler : BaseMediator,IRequestHandler<GetAllStudentsQuery, GetAllStudentsViewModel>
+        public class GetAllStudentsQueryHandler : BaseMediator,IRequestHandler<GetAllStudentsQuery, StudentsModel>
         {
             public GetAllStudentsQueryHandler(EFDbContext context) : base(context)
             {
             }
 
-            public Task<GetAllStudentsViewModel> Handle(GetAllStudentsQuery request, CancellationToken cancellationToken)
+            public Task<StudentsModel> Handle(GetAllStudentsQuery request, CancellationToken cancellationToken)
             {
-                var validationResult = StudentValidation(request.DTO);
-                if (!validationResult.Status)
-                {
-                    return Task.FromResult(validationResult);
-                }
+                ValidatePagginationModel(request.paggination);               
 
-                var students = GetStudents(request.DTO);
-                AddIndex(students, GetSkip(request.DTO.CurrentPage, request.DTO.Rows));
+                var students = GetStudents(request.paggination);
+                AddIndex(students);
 
-                return Task.FromResult(new GetAllStudentsViewModel
-                {
-                    Status = true,
+                return Task.FromResult(new StudentsModel
+                {           
                     Students = students
                 });
             }        
 
-            private GetAllStudentsViewModel StudentValidation(GetAllStudentsDTO DTO)
+            private void ValidatePagginationModel(PagginationModel model)
             {
-                var studentValidation = new GetAllStudentsValidation
-                    (
-                    Context.BaseProfiles
-                   .Include(x => x.StudentProfile)
-                   .Where(x => x.StudentProfile != null && !x.IsDeleted)                 
-                   .Count()
-                   );
-
-                var validationResult = studentValidation.Validate(DTO);
-                if (validationResult.Errors.Count > 0)
-                {
-                    return new GetAllStudentsViewModel
-                    {
-                        Status = false,
-                        ErrorMessage = validationResult.Errors.First().ErrorMessage
-                    };
-                }
-                return new GetAllStudentsViewModel { Status = true };
-            }
-
-            private List<GetAllStudentInner> GetStudents(GetAllStudentsDTO dto)
-            {
-                var filter = dto.Filter;
-
-                return Context.BaseProfiles
+                var studentsCount = Context.BaseProfiles
+                   .AsNoTracking()
                    .Include(x => x.StudentProfile)
                    .Where(x => x.StudentProfile != null && !x.IsDeleted)
-                   .Where(x =>
-                    x.Name.Equals(String.IsNullOrEmpty(filter.Name) || filter.Name.Equals("string") ? x.Name : dto.Filter.Name) &&
-                    x.Surname.Equals(String.IsNullOrEmpty(filter.Surname) || filter.Surname.Equals("string") ? x.Surname : dto.Filter.Surname) &&
-                    x.Age.Equals(String.IsNullOrEmpty(filter.Age) || filter.Age.Equals("string") ? x.Age : dto.Filter.Age)
-                   )
-                   .Skip(GetSkip(dto.CurrentPage,dto.Rows))
-                   .Take(dto.Rows)
-                   .Select(x => new GetAllStudentInner
+                   .Count();
+                var studentValidation = new GettingStudentsValidation(studentsCount);                   
+
+                var validationResult = studentValidation.Validate(model);
+                if (validationResult.Errors.Count > 0)
+                {
+                    throw new Exception(validationResult.Errors.First().ErrorMessage);                    
+                }
+            }
+
+            private List<StudentItem> GetStudents(PagginationModel model)
+            {
+                var filter = model.Filter;
+                var students = Context.BaseProfiles
+                   .AsNoTracking()
+                   .Include(x => x.StudentProfile)
+                   .Where(x => x.StudentProfile != null && !x.IsDeleted);
+
+                if(!String.IsNullOrEmpty(model.Filter.SearchCriteria))
+                {
+                    students = students.Where(x => 
+                    x.Name.ToLower().Contains(model.Filter.SearchCriteria.ToLower()) 
+                    || x.Surname.ToLower().Contains(model.Filter.SearchCriteria.ToLower())
+                    );
+                }
+
+                return students
+                   .Skip(GetCurrentPage(model.CurrentPage, model.PageSize))
+                   .Take(model.PageSize)
+                   .Select(x => new StudentItem
                    {
-                       HashId = x.Id,
+                       Id = x.Id,
                        Name = x.Name,
                        Surname = x.Surname,
                        Age = x.Age,
@@ -90,30 +84,21 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                    }).ToList();
             }
 
-            //private string NormalizedFilter(string filter, string field)
-            //{
-            //    if (String.IsNullOrEmpty(filter) || filter.Equals("string"))
-            //    {
-            //        return field;
-            //    }
-
-            //    return filter;
-            //}
-
-
-            private int GetSkip(int currentPage,int rows)
+            private int GetCurrentPage(int currentPage,int PageSize)
             {             
-                return (currentPage-1)*rows;
+                return (currentPage-1)*PageSize;
             }
 
-            private void AddIndex(List<GetAllStudentInner> students,int from)
+            private void AddIndex(List<StudentItem> students) // delete
             {
-                int index = from;
+                var studentsToCourse = Context.StudentsToCourses.AsNoTracking();
+
                 for (int i = 0; i < students.Count; i++)
                 {
-                    if (Context.StudentsToCourses.Where(x => x.StudentId == students[i].Id).Count() > 0)
+                    if (studentsToCourse.Where(x => x.StudentId == students[i].Id).Count() > 0)
                     {
                         students[i].DateOfCourseStart = Context.StudentsToCourses
+                            .AsNoTracking()
                             .Include(x => x.Course)
                             .Where(x => x.StudentId == students[i].Id)
                             .OrderBy(x => x.Course.DateOfStart)
@@ -123,10 +108,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                     else
                     {
                         students[i].DateOfCourseStart = DateTime.Now.ToString("dd MMMM yyyy");
-                    }
-
-                    students[i].Id = (index + 1).ToString();
-                    index++;
+                    }                  
                 }
             }
         }

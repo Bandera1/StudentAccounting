@@ -79,6 +79,7 @@ export function GetAllStudents(model) {
                 dispatch(getAllStudentsListActions.success(response.data));
             }, err => { throw err; })
             .catch(err => {
+                console.error("Error",err);
                 dispatch(getAllStudentsListActions.failed(err));
             });
     }

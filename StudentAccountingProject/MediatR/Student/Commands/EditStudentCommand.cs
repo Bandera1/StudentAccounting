@@ -32,7 +32,14 @@ namespace StudentAccountingProject.MediatR.Student.Commands
                     .Include(x => x.BaseProfile)
                     .Where(x => x.BaseProfile.StudentProfile != null)
                     .FirstOrDefault(x => x.Id == request.DTO.Id);
-                if (student == null || student.BaseProfile.IsDeleted) return new BaseViewModel { Status = false, ErrorMessage = "Student doesn`t exist" };
+                if (student == null || student.BaseProfile.IsDeleted)
+                {
+                    return new BaseViewModel
+                    {
+                        Status = false,
+                        ErrorMessage = "Student doesn`t exist"
+                    };
+                }
 
                 var newUser = new BaseProfile
                 {

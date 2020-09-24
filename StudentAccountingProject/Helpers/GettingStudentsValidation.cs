@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace StudentAccountingProject.Helpers
 {
-    public class GetAllStudentsValidation : AbstractValidator<GetAllStudentsDTO>
+    public class GettingStudentsValidation : AbstractValidator<PagginationModel>
     {
-        public GetAllStudentsValidation(int studentsCount)
+        public GettingStudentsValidation(int studentsCount)
         {
-            RuleFor(x => x.Rows)
+            RuleFor(x => x.PageSize)
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .GreaterThan(-1).WithMessage("Rows incorrect");
 

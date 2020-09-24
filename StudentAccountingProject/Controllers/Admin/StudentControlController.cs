@@ -23,12 +23,14 @@ namespace StudentAccountingProject.Controllers.Admin
         }
 
         [HttpPost("GetAllStudents")]
-        public async Task<IActionResult> GetAllStudents([FromBody]GetAllStudentsQuery query)
+        public async Task<IActionResult> GetAllStudents([FromBody]GetAllStudentsQuery query) // ASK
         {
             var result = await Mediator.Send(query);
 
-            if (result.Status) return Ok(result);
-            return BadRequest(result);
+            if (!String.IsNullOrEmpty(result.ErrorMessage))
+                return BadRequest(result);
+
+            return Ok(result);        
         }
 
         [HttpPost("CreateStudent")]

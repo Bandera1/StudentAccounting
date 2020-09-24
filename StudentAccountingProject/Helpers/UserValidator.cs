@@ -27,9 +27,9 @@ namespace StudentAccountingProject.Helpers
               .Cascade(CascadeMode.StopOnFirstFailure)
               .EmailAddress().WithMessage("{PropertyName} incorrect");
 
-            RuleFor(x => x.Age)
+            RuleFor(x => Convert.ToInt32(x.Age))
               .Cascade(CascadeMode.StopOnFirstFailure)
-              .InclusiveBetween("1","122").WithMessage("{PropertyName} incorrect");
+              .InclusiveBetween(1,122).WithMessage("{PropertyName} incorrect");
         }
     }
 }

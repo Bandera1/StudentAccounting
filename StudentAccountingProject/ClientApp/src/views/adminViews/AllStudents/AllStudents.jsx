@@ -52,7 +52,7 @@ class AllStudents extends Component {
             loading:false,
             first: 0,
             totalRecords: 0,
-            rows:2,
+            rows:6,
 
             isStudentCreateSuccess: false,
             isStudentEditSuccess: false,
@@ -91,7 +91,7 @@ class AllStudents extends Component {
 
     componentDidMount = () => {
         this.props.GetStudentsCount();
-        setTimeout(x => { this.updateStudents();},1000)
+        setTimeout(x => { this.updateStudents(this.state.first,this.state.rows);},1000)
     };
 
     componentWillReceiveProps = (nextProps) => {
@@ -119,25 +119,23 @@ class AllStudents extends Component {
         });
     }
 
-    updateStudents = () => {
-        let myFirst = this.state.first == 0 ? 1 : this.state.first;
+    updateStudents = (CurrentPage,PageSize,Filter) => {
+        let myFirst = CurrentPage == 0 ? 1 : CurrentPage;
         if(myFirst % 2 == 0 && myFirst > 2)
         {
             myFirst = myFirst - 1;
         }
 
         let newModel = {
-            dto:{
+            paggination: {
                 filter: {
-                    name: '',
-                    surname: '',
-                    age: ''
+                    searchCriteria: Filter
                 },
                 currentPage: myFirst,
-                rows: this.state.rows
+                pageSize: PageSize
             }
         }
-     
+
         this.props.GetAllStudents(newModel);
     }
 
@@ -174,7 +172,7 @@ class AllStudents extends Component {
             if (this.state.Student.id) {               
                 let editedStudent = {
                     DTO: {
-                        id: Student.hashId,
+                        id: Student.id,
                         Name: Student.name,
                         Surname: Student.surname,
                         Age: Student.age.toString(),
@@ -226,7 +224,7 @@ class AllStudents extends Component {
         let model = {
             DTO:{
                 students: [{
-                    studentId: deleteStudent[0].hashId            
+                    studentId: deleteStudent[0].id            
                 }]
             }
         }
@@ -271,7 +269,7 @@ class AllStudents extends Component {
     deleteSelectedStudents() {
         let students = this.state.Students.filter(val => this.state.selectedStudents.includes(val)).map(a => {
             return {
-                studentId: a.hashId
+                studentId: a.id
             }
         });
         let model = {
@@ -343,13 +341,17 @@ class AllStudents extends Component {
         );
     }
 
-    onPage(event){       
+    onPage(event) {       
         const { first } = event;
         setTimeout(() => {
             this.setState({ first });
-            this.updateStudents();
+            this.updateStudents(this.state.first, this.state.rows);
         },100);
        
+    }
+
+    onFiler(filter) {
+        this.updateStudents(this.state.first, this.state.rows,filter);
     }
 
 //-----------------------TOASTS------------------------------
@@ -395,7 +397,7 @@ class AllStudents extends Component {
                 <h5 className="p-m-0">Students</h5>
                 <span className="p-input-icon-left">
                     <i className="pi pi-search" />
-                    <InputText type="search" onInput={(e) => this.setState({ globalFilter: e.target.value })} placeholder="Search..." />
+                    <InputText type="search" onInput={(e) => this.onFiler(e.target.value)} placeholder="Search..." />
                 </span>
             </div>
         );
@@ -450,7 +452,7 @@ class AllStudents extends Component {
                         header={header}>
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                        <Column field="id" header="Id" style={{ width: "8rem" }} sortable></Column>
+                        <Column field="id" header="Id" style={{ width: "25rem" }} sortable></Column>
                         <Column field="name" header="Name" sortable></Column>
                         <Column field="surname" header="Surname" sortable></Column>
                         <Column field="age" header="Age" style={{ width: "8rem" }} sortable></Column>
