@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentAccountingProject.MediatR.Student.Commands;
+using StudentAccountingProject.MediatR.Student.DTO;
 using StudentAccountingProject.MediatR.Student.Queries;
 
 namespace StudentAccountingProject.Controllers.Admin
@@ -21,17 +22,10 @@ namespace StudentAccountingProject.Controllers.Admin
             return Ok(result);
         }
 
-        [HttpGet("GetAllStudents/{from}/{to}")]
-        public async Task<IActionResult> GetAllStudents(int from, int to)
+        [HttpPost("GetAllStudents")]
+        public async Task<IActionResult> GetAllStudents([FromBody]GetAllStudentsQuery query)
         {
-            var result = await Mediator.Send(new GetAllStudentsQuery 
-            {
-                DTO = new MediatR.Student.DTO.GetAllStudentsDTO
-                {
-                    From = from,
-                    To = to
-                }
-            });
+            var result = await Mediator.Send(query);
 
             if (result.Status) return Ok(result);
             return BadRequest(result);

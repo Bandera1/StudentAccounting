@@ -11,17 +11,15 @@ namespace StudentAccountingProject.Helpers
     {
         public GetAllStudentsValidation(int studentsCount)
         {
-            RuleFor(x => x.From)
+            RuleFor(x => x.Rows)
                 .Cascade(CascadeMode.StopOnFirstFailure)
-                .GreaterThan(-1)
-                .LessThan(x => x.To).WithMessage("{PropertyName} incorrect")
-                .LessThan(studentsCount).WithMessage("{PropertyName} more than students count");
-            
-            RuleFor(x => x.To)
+                .GreaterThan(-1).WithMessage("Rows incorrect");
+
+            RuleFor(x => x.CurrentPage)
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotEmpty()
-                .GreaterThan(0).WithMessage("{PropertyName} incorrect")
-                .LessThan(studentsCount+1).WithMessage("{PropertyName} more than students count");
+                .GreaterThan(0).WithMessage("Current page incorrect");
+                //.LessThan(studentsCount + 1).WithMessage("{PropertyName} more than students count");
         }
     }
 }

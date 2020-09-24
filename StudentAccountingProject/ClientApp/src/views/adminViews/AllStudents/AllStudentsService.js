@@ -5,8 +5,8 @@ export default class AllStudentsService {
     static GetStudentsCount() {
         return axios.get(`${serverUrl}api/studentControl/GetStudentsCount`)
     };
-    static GetAllStudents(from,to) {
-        return axios.get(`${serverUrl}api/studentControl/GetAllStudents/${from}/${to}`)
+    static GetAllStudents(model) {
+        return axios.post(`${serverUrl}api/studentControl/GetAllStudents`,model)
     };
     static CreateStudent(model) {
         return axios.post(`${serverUrl}api/studentControl/CreateStudent`,model)

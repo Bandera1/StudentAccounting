@@ -52,7 +52,7 @@ class AllStudents extends Component {
             loading:false,
             first: 0,
             totalRecords: 0,
-            rows:4,
+            rows:2,
 
             isStudentCreateSuccess: false,
             isStudentEditSuccess: false,
@@ -91,12 +91,11 @@ class AllStudents extends Component {
 
     componentDidMount = () => {
         this.props.GetStudentsCount();
-        setTimeout(x => { this.initStudents();},1000)
+        setTimeout(x => { this.updateStudents();},1000)
     };
 
     componentWillReceiveProps = (nextProps) => {
         //- Binding
-        console.log("Next props",nextProps);
         this.setState({
             Students: nextProps.studentReducer.getStudents.students,
             loading: nextProps.studentReducer.getStudents.loading,
@@ -120,18 +119,26 @@ class AllStudents extends Component {
         });
     }
 
-    initStudents = () => {
-        const {first,rows} = this.state;
-        if(this.state.totalRecords >= this.state.rows)
+    updateStudents = () => {
+        let myFirst = this.state.first == 0 ? 1 : this.state.first;
+        if(myFirst % 2 == 0 && myFirst > 2)
         {
-            this.updateStudents(first,first+rows);
-        } else {
-            this.updateStudents(0, this.state.totalRecords);
+            myFirst = myFirst - 1;
         }
-    }
 
-    updateStudents = (from,to) => {
-        this.props.GetAllStudents(from, to);
+        let newModel = {
+            dto:{
+                filter: {
+                    name: '',
+                    surname: '',
+                    age: ''
+                },
+                currentPage: myFirst,
+                rows: this.state.rows
+            }
+        }
+     
+        this.props.GetAllStudents(newModel);
     }
 
     openNew() {
@@ -337,12 +344,12 @@ class AllStudents extends Component {
     }
 
     onPage(event){       
-        const { first, rows } = event;
-        const {totalRecords} = this.state;
-
-        console.log(`From ${first} To ${first + (totalRecords - first)}`);
-        this.updateStudents(first, first + (totalRecords - first));
-        this.setState({first});
+        const { first } = event;
+        setTimeout(() => {
+            this.setState({ first });
+            this.updateStudents();
+        },100);
+       
     }
 
 //-----------------------TOASTS------------------------------
@@ -431,14 +438,15 @@ class AllStudents extends Component {
                     <DataTable ref={(el) => this.dt = el} 
                         loading={this.state.loading}
                         lazy first={this.state.first}
+                        paginator rows={this.state.rows}
                         totalRecords={this.state.totalRecords}     
                         value={this.state.Students} 
                         selection={this.state.selectedStudents} 
                         onPage={e => this.onPage(e)}
                         onSelectionChange={(e) => this.setState({ selectedStudents: e.value })}
-                        dataKey="id" paginator rows={this.state.rows}
+                        dataKey="id" 
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                        globalFilter={this.state.globalFilter}             
+                        // globalFilter={this.state.globalFilter}             
                         header={header}>
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
@@ -507,8 +515,8 @@ const mapDispatchToProps = (dispatch) => {
         GetStudentsCount: () => {
             dispatch(reducer.GetStudentsCount());
         },
-        GetAllStudents: (from,to) => {
-            dispatch(reducer.GetAllStudents(from,to));
+        GetAllStudents: (model) => {
+            dispatch(reducer.GetAllStudents(model));
         },
         CreateStudent: (model) => {
             dispatch(reducer.CreateStudent(model));

@@ -63,7 +63,6 @@ export function GetStudentsCount() {
         dispatch(getStudentsCountListActions.started());
         AllStudentsService.GetStudentsCount()
             .then((response) => {
-                console.log("Get student count", response);
                 dispatch(getStudentsCountListActions.success(response.data));
             }, err => { throw err; })
             .catch(err => {
@@ -72,13 +71,11 @@ export function GetStudentsCount() {
     }
 }
 
-export function GetAllStudents(from,to) {
-    console.log("GET STUDENTS!!");
+export function GetAllStudents(model) {
     return (dispatch) => {
         dispatch(getAllStudentsListActions.started());
-        AllStudentsService.GetAllStudents(from,to)
+        AllStudentsService.GetAllStudents(model)
             .then((response) => {
-                console.log("GetAllStudents", response);
                 dispatch(getAllStudentsListActions.success(response.data));
             }, err => { throw err; })
             .catch(err => {
