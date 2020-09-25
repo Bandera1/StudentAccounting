@@ -11,7 +11,7 @@ using StudentAccountingProject.MediatR.Student.Queries;
 
 namespace StudentAccountingProject.Controllers.Admin
 {
-    //[Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public class StudentControlController : ApiController
     {
         [HttpGet("GetStudentsCount")]

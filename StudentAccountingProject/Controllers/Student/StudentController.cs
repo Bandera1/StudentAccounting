@@ -32,10 +32,10 @@ namespace StudentAccountingProject.Controllers.Student
         {
             var studentId = User.Identities.First().Claims.First().Value;
 
-            command.DTO.StudentId = studentId;
+            command.model.StudentId = studentId;
             var result = await Mediator.Send(command);
 
-            if (result.Status) return Ok(result);
+            if (String.IsNullOrEmpty(result.ErrorMessage)) return Ok(result);
             return BadRequest(result);
         }
 

@@ -18,7 +18,7 @@ namespace StudentAccountingProject.MediatR.Course.Commands
 {
     public class SubscribeToCourseCommand : IRequest<SubscribeCourseViewModel>
     {
-        public SubscribeToCourseDTO DTO { get; set; }
+        public SubscribeModel model { get; set; }
 
         public class SubscribeToCourseCommandHandler : BaseMediator, IRequestHandler<SubscribeToCourseCommand, SubscribeCourseViewModel>
         {
@@ -36,25 +36,58 @@ namespace StudentAccountingProject.MediatR.Course.Commands
 
             public async Task<SubscribeCourseViewModel> Handle(SubscribeToCourseCommand request, CancellationToken cancellationToken)
             {
-                var course = Context.Courses.FirstOrDefault(x => x.Id == request.DTO.CourseId && !x.IsDeleted);
+                //-----------GET DATA-------------
+                var course = Context.Courses
+                    .FirstOrDefault(x => x.Id == request.model.CourseId && !x.IsDeleted);
+                var student = Context.Users
+                    .FirstOrDefault(x => x.Id == request.model.StudentId);
+
+                //-----------VALIDATION-------------
+                var validationResult = Validate(course,student);
+                if (!String.IsNullOrEmpty(validationResult.ErrorMessage))
+                {
+                    return validationResult;
+                }
+
+                var emailValidationResult = await ValidateEmailConfirmed(student);
+                if(!String.IsNullOrEmpty(emailValidationResult.ErrorMessage))
+                {
+                    return emailValidationResult;
+                }
+
+                //-----------OTHER-------------
+                AddStudentToCourse(Context, course.Id, student.Id);
+
+                NotificationTree(course, student);
+
+                return new SubscribeCourseViewModel ();
+            }          
+        
+            private SubscribeCourseViewModel Validate(
+                DB.Entities.Course course,
+                DB.IdentityModels.DbUser student)
+            {
                 if (course == null)
                 {
                     return new SubscribeCourseViewModel
                     {
-                        Status = false,
                         ErrorMessage = "Curse does not exist"
                     };
                 }
 
-                var student = Context.Users.FirstOrDefault(x => x.Id == request.DTO.StudentId);
                 if (student == null)
                 {
                     return new SubscribeCourseViewModel
                     {
-                        Status = false,
                         ErrorMessage = "Student does not exist"
                     };
                 }
+
+                return new SubscribeCourseViewModel();
+            }
+
+            private async Task<SubscribeCourseViewModel> ValidateEmailConfirmed(DB.IdentityModels.DbUser student)
+            {
                 if (!student.EmailConfirmed)
                 {
                     await Mediator.Send(new SendConfirmEmailCommand
@@ -63,57 +96,68 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                     });
                     return new SubscribeCourseViewModel
                     {
-                        Status = false,
                         ErrorMessage = "Your email is not verified. Go to the email for confirmation."
                     };
-
                 }
-
+                return new SubscribeCourseViewModel();
+            }
+        
+            private void AddStudentToCourse(EFDbContext context,string courseId,string studentId)
+            {
                 Context.StudentsToCourses.Add(new DB.Entities.StudentToCourse
                 {
-                    CourseId = course.Id,
-                    StudentId = student.Id
+                    CourseId = courseId,
+                    StudentId = studentId
                 });
                 Context.SaveChanges();
+            }
+        
+            private void NotificationTree(DB.Entities.Course course, DB.IdentityModels.DbUser student)
+            {
+                const int MONTH = 30;
+                const int WEEK = 7;
+                const int DAY = 1;
+                var days = 0;
 
-                System.Action<string, string, int> act = async (courseName, email, days) => {
-                    await Mediator.Send(new SendNotificationEmailCommand
-                    {
-                        DTO = new SendNotificationEmailDTO
-                        {
-                            CourseName = courseName,
-                            UserEmail = email,
-                            DaysCount = days
-                        }
-                    });
-                };
 
-                if ((course.DateOfStart - DateTime.Now).Days >= 30)
+                if ((course.DateOfStart - DateTime.Now).Days >= MONTH)
                 {
-                    var days = (course.DateOfStart - DateTime.Now).Days - 30;
+                    MoreThanMonth();
+                }
+                else
+                {
+                    LessThanMonth();
+                }
 
-                    BackgroundJobClient.Schedule(
-                    () => act.Invoke(course.Name, student.Email, 30),
-                    TimeSpan.FromDays(days));
+                void MoreThanMonth()
+                {
+                    days = (course.DateOfStart - DateTime.Now).Days - MONTH;
 
-                    BackgroundJobClient.Schedule(
-                    () => act.Invoke(course.Name, student.Email, 7),
-                    TimeSpan.FromDays(days + 23));
+                    SendNotificationSchedule(
+                        course.Name, 
+                        student.Email, 
+                        MONTH, 
+                        TimeSpan.FromDays(days)); // Month
+ 
+                    SendNotificationSchedule(
+                        course.Name,
+                        student.Email, 
+                        WEEK,TimeSpan.FromDays(days + 23)); // Week
 
                     int hour = 0;
-                    if(course.DateOfStart.Hour > 8)
+                    if (course.DateOfStart.Hour > 8)
                     {
-                        if(DateTime.Now.Hour > 8)
+                        if (DateTime.Now.Hour > 8)
                         {
                             days += 6;
                             hour = DateTime.Now.Hour - 8;
-                        } 
+                        }
                         else
                         {
                             days += 7;
                             hour = 8 - DateTime.Now.Hour;
                         }
-                    } 
+                    }
                     else
                     {
                         if (DateTime.Now.Hour > 8)
@@ -128,20 +172,36 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                         }
                     }
 
-                    BackgroundJobClient.Schedule(
-                    () => act.Invoke(course.Name, student.Email, 7),
-                    new TimeSpan(days,hour,0,0));
+                    SendNotificationSchedule(
+                        course.Name, 
+                        student.Email, 
+                        DAY, 
+                        new TimeSpan(days, hour, 0, 0)); // Week
                 }
-                else
-                {
-                    var days = (course.DateOfStart - DateTime.Now).Days;
 
-                    if(days > 7)
+                void LessThanMonth()
+                {
+                    days = (course.DateOfStart - DateTime.Now).Days;
+                    
+                    if(days > WEEK)
                     {
-                        days -= 7;
-                        BackgroundJobClient.Schedule(
-                        () => act.Invoke(course.Name, student.Email, 7),
-                        TimeSpan.FromDays(days));
+                        MoreThanWeek();
+                    } else
+                    {
+                        LessThanWeek();
+                    }
+
+
+
+                    void MoreThanWeek()
+                    {
+                        days -= WEEK;
+
+                        SendNotificationSchedule(
+                            course.Name,
+                            student.Email,
+                            DAY,
+                            TimeSpan.FromDays(days));
 
                         int hour = 0;
                         if (course.DateOfStart.Hour > 8)
@@ -171,18 +231,21 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                             }
                         }
 
-                        BackgroundJobClient.Schedule(
-                        () => act.Invoke(course.Name, student.Email, 7),
-                        new TimeSpan(days, hour, 0, 0));
-                    } 
-                    else
+                        SendNotificationSchedule(
+                          course.Name,
+                          student.Email,
+                          DAY,
+                          new TimeSpan(days, hour, 0, 0));
+                    }
+
+                    void LessThanWeek()
                     {
                         int hour = 0;
                         if (course.DateOfStart.Hour > 8)
                         {
                             if (DateTime.Now.Hour > 8)
                             {
-                                if((course.DateOfStart - DateTime.Now).Days < 7)
+                                if ((course.DateOfStart - DateTime.Now).Days < WEEK)
                                 {
                                     days = 6 + (course.DateOfStart - DateTime.Now).Days;
                                 }
@@ -191,9 +254,9 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                             }
                             else
                             {
-                                if ((course.DateOfStart - DateTime.Now).Days < 7)
+                                if ((course.DateOfStart - DateTime.Now).Days < WEEK)
                                 {
-                                    days = 7 + (course.DateOfStart - DateTime.Now).Days;
+                                    days = WEEK + (course.DateOfStart - DateTime.Now).Days;
                                 }
                                 hour = 8 - DateTime.Now.Hour;
                             }
@@ -212,14 +275,37 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                             }
                         }
 
-                        BackgroundJobClient.Schedule(
-                        () => act.Invoke(course.Name, student.Email, 7),
-                        new TimeSpan(days, hour, 0, 0));
-                    }              
-                }            
+                        SendNotificationSchedule(
+                          course.Name,
+                          student.Email,
+                          DAY,
+                          new TimeSpan(days, hour, 0, 0));
+                    }
+                }
+            }   
+        
+            private void SendNotificationSchedule(
+                string CourseName,
+                string Email,
+                int EmailDays,
+                TimeSpan Schedule)
+            {
+                System.Action<string, string, int> act = async (courseName, email, days) => {
+                    await Mediator.Send(new SendNotificationEmailCommand
+                    {
+                        DTO = new SendNotificationEmailDTO
+                        {
+                            CourseName = courseName,
+                            UserEmail = email,
+                            DaysCount = days
+                        }
+                    });
+                };
 
-                return new SubscribeCourseViewModel { Status = true };
-            }          
+                BackgroundJobClient.Schedule(
+                    () => act.Invoke(CourseName, Email, EmailDays),
+                    Schedule);           
+            }
         }
     }
 }

@@ -43,13 +43,14 @@ class AllCourses extends Component {
 
     subcribeToCourse = (id) => {
         console.log("Course id",id)
-        let model = {
-            dto:{
+        let myModel = {
+            model:{
                 courseId:id,
                 studentId:""
             }
         }
-        this.props.SubscribeToCourse(model);
+        console.log(myModel);
+        this.props.SubscribeToCourse(myModel);
     }
 
     showSuccessGrowl = () => {

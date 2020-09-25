@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace StudentAccountingProject.MediatR.Course.DTO
 {
-    public class SubscribeToCourseDTO
+    public class SubscribeModel
     {
         public string CourseId { get; set; }
         public string StudentId { get; set; }
