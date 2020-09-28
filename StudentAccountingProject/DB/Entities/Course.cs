@@ -20,14 +20,12 @@ namespace StudentAccountingProject.DB.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public string AuthorId { get; set; }
-        //public string Photo { get; set; }
+        public string PhotoPath { get; set; }
         public int Rating { get; set; }
-        //public string File { get; set; } 
         public DateTime DateOfStart { get; set; }
         public DateTime DateOfEnd { get; set; }
         public bool IsDeleted { get; set; }
 
         public virtual BaseProfile Author { get; set; }
-        //public virtual ICollection<BaseProfile> Subscribers { get; set; }
     }
 }

@@ -37,8 +37,7 @@ namespace StudentAccountingProject.Controllers.Accounts
             {
                 return BadRequest();
             }
-            //try
-            //}
+          
             var result = await Mediator.Send(command);
             if (result.Status)
             {
@@ -48,12 +47,7 @@ namespace StudentAccountingProject.Controllers.Accounts
             {
                 return BadRequest(result);
             }
-            //}
-            //catch (Exception e)
-            //{
-            //    var res = new RegistrationViewModel { Status = false, ErrorMessage = e.Message };
-            //    return BadRequest(res);
-            //}
+           
         }
 
         [HttpPost("sendConfirmEmail")]
@@ -79,6 +73,16 @@ namespace StudentAccountingProject.Controllers.Accounts
 
             if (result.Status) return Ok(result);
             return BadRequest(result);
+        }
+
+        [HttpPost("changeImage")]
+        public async Task<IActionResult> changeImage([FromBody]ChangeUserImageCommand command)
+        {
+            var studentId = User.Identities.First().Claims.First().Value;
+            command.Model.UserId = studentId;
+
+            var result = await Mediator.Send(command);
+            return Ok(result);
         }
 
     }

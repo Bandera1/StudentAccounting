@@ -20,7 +20,7 @@ namespace StudentAccountingProject.DB.Entities
         public string Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string Photo { get; set; }
+        public string PhotoPath { get; set; }
         public string Age { get; set; }
         public DateTime RegisterDate { get; set; }
         public string UserId { get; set; }
@@ -30,6 +30,5 @@ namespace StudentAccountingProject.DB.Entities
         public virtual AdminProfile AdminProfile { get; set; }
 
         public virtual DbUser User { get; set; }
-        //public virtual ICollection<Course> Courses { get; set; }
     }
 }
