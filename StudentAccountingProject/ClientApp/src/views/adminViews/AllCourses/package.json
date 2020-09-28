@@ -1,0 +1,6 @@
+{
+    "name": "AllCourses",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./AllCourses.jsx"
+}

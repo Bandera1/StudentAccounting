@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -173,6 +175,41 @@ namespace StudentAccountingProject
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+
+            #region InitStaticFiles UsersImages
+            string pathUsers = InitStaticFiles
+               .CreateFolderServer(env, this.Configuration,
+                   new string[] { "ImagesPath", "ImagesPathUsers" });
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(pathUsers),
+                RequestPath = new PathString('/' + Configuration.GetValue<string>("UsersUrlImages"))
+            });
+            #endregion
+
+            #region InitStaticFiles CoursesImages
+            string pathCourses = InitStaticFiles
+               .CreateFolderServer(env, this.Configuration,
+                   new string[] { "ImagesPath", "ImagesPathCourses" });
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(pathCourses),
+                RequestPath = new PathString('/' + Configuration.GetValue<string>("CoursesUrlImages"))
+            });
+            #endregion
+
+            #region InitStaticFiles Images
+            string pathRoot = InitStaticFiles
+                .CreateFolderServer(env, this.Configuration,
+                    new string[] { "ImagesPath" });
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(pathRoot),
+                RequestPath = new PathString("/" + Configuration.GetValue<string>("UrlImages"))
+            });
+            #endregion;
 
             //Seeder
             SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);

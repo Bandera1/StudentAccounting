@@ -60,6 +60,7 @@ class AdminLayout extends Component {
         const content = (<div className="app">
             <Navbar color="dark" dark expand="md">
                 <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/students"); history.go() }}>Students list</NavbarBrand>
+                <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/courses"); history.go() }}>Courses list</NavbarBrand>
                 <NavbarToggler onClick={(e) => { this.navbarToogle() }} />              
             </Navbar>
             <div className="app-body">
