@@ -37,6 +37,7 @@ namespace StudentAccountingProject.MediatR.Course.Queries
                      DateOfStart = x.DateOfStart.ToString("dd MMMM yyyy"),
                      DateOfEnd = x.DateOfEnd.ToString("dd MMMM yyyy"),
                      Rating = Convert.ToInt32(x.Rating),
+                     PhotoPath = x.PhotoPath,
                      IsSubscribe = Context.StudentsToCourses.Where(n => n.CourseId == x.Id)
                      .FirstOrDefault(b => b.StudentId == request.DTO.StudentId) == null ? false : true
                  }).ToList();

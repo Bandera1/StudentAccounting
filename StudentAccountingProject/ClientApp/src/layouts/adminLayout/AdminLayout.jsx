@@ -33,9 +33,8 @@ class AdminLayout extends Component {
     loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
     signOut(e) {
-        e.preventDefault();
         this.props.logout();
-        this.props.history.push('/login')
+        // this.props.history.push('/login')
     }
 
     
@@ -61,7 +60,11 @@ class AdminLayout extends Component {
             <Navbar color="dark" dark expand="md">
                 <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/students"); history.go() }}>Students list</NavbarBrand>
                 <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/courses"); history.go() }}>Courses list</NavbarBrand>
-                <NavbarToggler onClick={(e) => { this.navbarToogle() }} />              
+                <NavbarToggler onClick={(e) => { this.navbarToogle() }} />           
+                
+                <Nav className="justify-content-end" style={{ width: "100%" }}>
+                    <NavbarBrand href="/#/" onClick={e => { this.signOut(); }}>Logout</NavbarBrand>
+                </Nav>   
             </Navbar>
             <div className="app-body">
                 <main className="main">

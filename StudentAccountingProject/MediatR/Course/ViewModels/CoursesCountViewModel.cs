@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace StudentAccountingProject.MediatR.Course.ViewModels
 {
-    public class SubscribeCourseViewModel
+    public class CoursesCountViewModel
     {
-        public bool Status { get; set; }
-        public string ErrorMessage { get; set; }
+        public int Count { get; set; }
     }
 }

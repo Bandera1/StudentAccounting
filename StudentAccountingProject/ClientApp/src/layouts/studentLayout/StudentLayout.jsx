@@ -37,9 +37,9 @@ class StudentLayout extends Component {
     loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
     signOut(e) {
-        e.preventDefault();
+        // e.preventDefault();
         this.props.logout();
-        this.props.history.push('/login')
+        // this.props.history.push('/login')
     }
 
     render() {
@@ -71,8 +71,8 @@ class StudentLayout extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink href="/#/student/courses" onClick={e => { history.push("/#/student/courses"); history.go() }}>All courses</NavLink>
-                        </NavItem>                   
-                    </Nav>
+                        </NavItem>                                 
+                    </Nav>                  
                 </Collapse>
             </Navbar>
             <div className="app-body">

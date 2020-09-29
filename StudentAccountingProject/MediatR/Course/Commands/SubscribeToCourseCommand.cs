@@ -7,6 +7,7 @@ using StudentAccountingProject.DB.Helpers;
 using StudentAccountingProject.MediatR.Account.Commands;
 using StudentAccountingProject.MediatR.Course.DTO;
 using StudentAccountingProject.MediatR.Course.ViewModels;
+using StudentAccountingProject.MediatR.Student.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,11 @@ using System.Threading.Tasks;
 
 namespace StudentAccountingProject.MediatR.Course.Commands
 {
-    public class SubscribeToCourseCommand : IRequest<SubscribeCourseViewModel>
+    public class SubscribeToCourseCommand : IRequest<BaseViewModel>
     {
         public SubscribeModel model { get; set; }
 
-        public class SubscribeToCourseCommandHandler : BaseMediator, IRequestHandler<SubscribeToCourseCommand, SubscribeCourseViewModel>
+        public class SubscribeToCourseCommandHandler : BaseMediator, IRequestHandler<SubscribeToCourseCommand, BaseViewModel>
         {
             private readonly IMediator Mediator;
             IBackgroundJobClient BackgroundJobClient;
@@ -34,7 +35,7 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                 BackgroundJobClient = backgroundJobClient;
             }
 
-            public async Task<SubscribeCourseViewModel> Handle(SubscribeToCourseCommand request, CancellationToken cancellationToken)
+            public async Task<BaseViewModel> Handle(SubscribeToCourseCommand request, CancellationToken cancellationToken)
             {
                 //-----------GET DATA-------------
                 var course = Context.Courses
@@ -60,16 +61,16 @@ namespace StudentAccountingProject.MediatR.Course.Commands
 
                 NotificationTree(course, student);
 
-                return new SubscribeCourseViewModel ();
+                return new BaseViewModel ();
             }          
         
-            private SubscribeCourseViewModel Validate(
+            private BaseViewModel Validate(
                 DB.Entities.Course course,
                 DB.IdentityModels.DbUser student)
             {
                 if (course == null)
                 {
-                    return new SubscribeCourseViewModel
+                    return new BaseViewModel
                     {
                         ErrorMessage = "Curse does not exist"
                     };
@@ -77,16 +78,16 @@ namespace StudentAccountingProject.MediatR.Course.Commands
 
                 if (student == null)
                 {
-                    return new SubscribeCourseViewModel
+                    return new BaseViewModel
                     {
                         ErrorMessage = "Student does not exist"
                     };
                 }
 
-                return new SubscribeCourseViewModel();
+                return new BaseViewModel();
             }
 
-            private async Task<SubscribeCourseViewModel> ValidateEmailConfirmed(DB.IdentityModels.DbUser student)
+            private async Task<BaseViewModel> ValidateEmailConfirmed(DB.IdentityModels.DbUser student)
             {
                 if (!student.EmailConfirmed)
                 {
@@ -94,12 +95,12 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                     {
                         DTO = new Account.DTO.SendConfirmEmailDTO { UserId = student.Id }
                     });
-                    return new SubscribeCourseViewModel
+                    return new BaseViewModel
                     {
                         ErrorMessage = "Your email is not verified. Go to the email for confirmation."
                     };
                 }
-                return new SubscribeCourseViewModel();
+                return new BaseViewModel();
             }
         
             private void AddStudentToCourse(EFDbContext context,string courseId,string studentId)

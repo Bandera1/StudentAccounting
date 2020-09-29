@@ -124,7 +124,7 @@ class AllStudents extends Component {
         if(myFirst % 2 == 0 && myFirst > 2)
         {
             myFirst = myFirst - 1;
-        }
+        }     
 
         let newModel = {
             paggination: {
@@ -452,7 +452,7 @@ class AllStudents extends Component {
                         header={header}>
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                        <Column field="id" header="Id" style={{ width: "25rem" }} sortable></Column>
+                        <Column field="id" header="Id" style={{ width: "18rem" }} sortable></Column>
                         <Column field="name" header="Name" sortable></Column>
                         <Column field="surname" header="Surname" sortable></Column>
                         <Column field="age" header="Age" style={{ width: "8rem" }} sortable></Column>

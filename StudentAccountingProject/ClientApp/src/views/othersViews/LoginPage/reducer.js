@@ -12,6 +12,7 @@ export const LOGIN_POST_SUCCESS = "LOGIN_POST_SUCCESS";
 export const LOGIN_POST_FAILED = "LOGIN_POST_FAILED";
 export const LOGIN_SET_CURRENT_USER = "login/SET_CURRENT_USER";
 
+export const LOGIN_LOGOUT = "LOGIN_LOGOUT";
 
 
 export const initialState = {
@@ -59,6 +60,14 @@ export const loginActions = {
     }
 };
 
+export const logoutActions = {
+    logout: () => {
+        return {
+            type: LOGIN_LOGOUT
+        }
+    }
+}
+
 export const loginReducer = (state = initialState, action) => {
     let newState = state;
 
@@ -91,6 +100,14 @@ export const loginReducer = (state = initialState, action) => {
             newState = update.set(newState, "post.failed", true);
             break;
         }
+
+        case LOGIN_LOGOUT: {
+            newState = update.set(state, "user.id", undefined);
+            newState = update.set(newState, "user.name", undefined);
+            newState = update.set(newState, "user.roles", undefined);
+            newState = update.set(newState, "isAuthenticated", false);
+        }
+
         default: {
             return newState;
         }
@@ -100,7 +117,6 @@ export const loginReducer = (state = initialState, action) => {
 };
 
 export const login = model => {
-    console.log("LOGIN!!!",model);
     return dispatch => {
         dispatch(loginActions.started());
         LoginService.login(model)
@@ -156,7 +172,6 @@ export const loginAndRedirect = (token,dispatch) =>
 
 export function getUrlToRedirect() {
     var user = jwt.decode(localStorage.jwtToken);
-    //let roles =[];
 
     if (user == null) {
         return "/";
@@ -203,7 +218,6 @@ export const loginByJWT = (tokens, dispatch) => {
     dispatch(loginActions.setCurrentUser(user));
 };
 
-
 export function logout() {
     return dispatch => {
         logoutByJWT(dispatch);
@@ -212,7 +226,8 @@ export function logout() {
 
 export const logoutByJWT = dispatch => {
     localStorage.removeItem("jwtToken");
-    //localStorage.removeItem("refreshToken");
+
     setAuthorizationToken(false);
-    dispatch(loginActions.setCurrentUser({}));
+    dispatch(logoutActions.logout());
+    // dispatch(loginActions.setCurrentUser({}));
 };

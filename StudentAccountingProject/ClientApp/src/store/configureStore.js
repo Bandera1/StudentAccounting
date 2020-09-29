@@ -11,7 +11,8 @@ import { registerReducer } from '../views/othersViews/RegisterPage/reducer';
 import { GetAllCoursesReducer } from '../views/studentsViews/AllCorses/reducer';
 import { GetStudentsCoursesReducer } from '../views/studentsViews/MyCourses/reducer';
 import { ConfirmEmailReducer } from '../views/othersViews/ConfirmEmail/reducer';
-import { AllStudentsReducer } from '../views/adminViews/AllStudents/reducer'
+import { AllStudentsReducer } from '../views/adminViews/AllStudents/reducer';
+import { AllCoursesReducer } from '../views/adminViews/AllCourses/reducer';
 
 
 
@@ -28,6 +29,7 @@ export default function configureStore(history, initialState) {
         studentsCourses: GetStudentsCoursesReducer,
         confirmEmail: ConfirmEmailReducer,
         AllStudents: AllStudentsReducer,
+        AllCourses: AllCoursesReducer,
     };
 
     const middleware = [

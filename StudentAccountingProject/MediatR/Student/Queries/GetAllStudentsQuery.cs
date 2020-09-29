@@ -30,7 +30,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                 ValidatePagginationModel(request.paggination);               
 
                 var students = GetStudents(request.paggination);
-                AddIndex(students);
+                AddData(students);
 
                 return Task.FromResult(new StudentsModel
                 {           
@@ -56,17 +56,17 @@ namespace StudentAccountingProject.MediatR.Student.Queries
 
             private List<StudentItem> GetStudents(PagginationModel model)
             {
-                var filter = model.Filter;
+                var filter = model.Filter.SearchCriteria;
                 var students = Context.BaseProfiles
                    .AsNoTracking()
                    .Include(x => x.StudentProfile)
                    .Where(x => x.StudentProfile != null && !x.IsDeleted);
 
-                if(!String.IsNullOrEmpty(model.Filter.SearchCriteria))
+                if(!String.IsNullOrEmpty(filter))
                 {
                     students = students.Where(x => 
-                    x.Name.ToLower().Contains(model.Filter.SearchCriteria.ToLower()) 
-                    || x.Surname.ToLower().Contains(model.Filter.SearchCriteria.ToLower())
+                    x.Name.ToLower().Contains(filter.ToLower()) 
+                    || x.Surname.ToLower().Contains(filter.ToLower())
                     );
                 }
 
@@ -89,7 +89,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                 return (currentPage-1)*PageSize;
             }
 
-            private void AddIndex(List<StudentItem> students) // delete
+            private void AddData(List<StudentItem> students) // delete
             {
                 var studentsToCourse = Context.StudentsToCourses.AsNoTracking();
 
