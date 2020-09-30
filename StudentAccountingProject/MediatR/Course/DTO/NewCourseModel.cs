@@ -11,7 +11,7 @@ namespace StudentAccountingProject.MediatR.Course.DTO
         public string Description { get; set; }
         public string AuthorId { get; set; }
         public string PhotoBase64 { get; set; }
-        public DateTime DateOfStart { get; set; }
-        public DateTime DateOfEnd { get; set; }
+        public string DateOfStart { get; set; }
+        public string DateOfEnd { get; set; }
     }
 }

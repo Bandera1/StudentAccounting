@@ -11,6 +11,7 @@ import { InputText } from 'primereact/inputtext';
 import { FileUpload } from 'primereact/fileupload';
 import { Rating } from 'primereact/rating';
 import { Dropdown } from 'primereact/dropdown';
+import { InputMask } from 'primereact/inputmask';
 
 import get from "lodash.get";
 import { connect } from "react-redux";
@@ -29,8 +30,8 @@ class AllCourses extends Component {
         name: '',
         description: '',
         author:null,
-        authorFormat: '',
         photoPath: '',
+        newPhotoBase64:'',
         rating: 0,
         dateOfStart:'',
         dateOfEnd: ''
@@ -165,7 +166,6 @@ class AllCourses extends Component {
     }
 
     saveCourse() {
-        console.log("Save Course");
         let state = { submitted: true };
 
         if (this.state.Course.name.trim()) {
@@ -184,12 +184,18 @@ class AllCourses extends Component {
                 // this.props.EditCourse(editedCourse);
             }
             else {
+                let myAuthor = {
+                    name: Course.author.name.split(' ')[0],
+                    surname: Course.author.name.split(' ')[1]
+                }
                 let newCourse = {
-                    DTO: {
+                    model: {
                         name: Course.name,
-                        surname: Course.surname,
-                        age: Course.age.toString(),
-                        email: Course.email
+                        description: Course.description,
+                        authorId: this.state.Authors.find((a) => a.name == myAuthor.name && a.surname == myAuthor.surname).id,
+                        photoBase64: Course.newPhotoBase64,
+                        DateOfStart: Course.dateOfStart,
+                        DateOfEnd: Course.dateOfEnd,
                     }
                 }
                 console.log("Create Course", newCourse);
@@ -289,7 +295,7 @@ class AllCourses extends Component {
         this.setState({ Course });
     }
 
-    onInputChange(e, name) {
+    onInputChange(e, name) {        
         const val = (e.target && e.target.value) || '';
         let Course = { ...this.state.Course };
         Course[`${name}`] = val;
@@ -353,6 +359,25 @@ class AllCourses extends Component {
 
     onFiler(filter) {
         this.updateCourses(this.state.first, this.state.rows, filter);
+    }
+
+    imageUrlToBase64 = (imgUrl) => {
+        var img = new Image();
+        img.src = imgUrl;
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.onload = (() => {
+            var canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            var dataURL = canvas.toDataURL("image/png");
+            dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+
+            let Course = { ...this.state.Course };
+            Course.newPhotoBase64 = dataURL;
+            this.setState({ Course });
+        });
     }
 
     //-----------------------TOASTS------------------------------
@@ -454,24 +479,36 @@ class AllCourses extends Component {
                         <InputText id="name" value={this.state.Course.name} onChange={(e) => this.onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.name })} />
                         {this.state.submitted && !this.state.Course.name && <small className="p-invalid">Name is required.</small>}
                     </div>
+
+                    <div className="p-field">
+                        <label htmlFor="name">Description</label>
+                        <InputText id="name" value={this.state.Course.description} onChange={(e) => this.onInputChange(e, 'description')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.description })} />
+                        {this.state.submitted && !this.state.Course.description && <small className="p-invalid">Description is required.</small>}
+                    </div>
+
                     <div className="p-field">
                         <label htmlFor="Author">Author</label>
-                        <Dropdown value={this.state.Course.author} options={this.state.Authors} onChange={(e) => this.onInputChange(e, 'author')} optionLabel="name" placeholder="Select a Author" />
+                        <Dropdown value={this.state.Course.author} options={this.state.Authors.map((e) => { return { name: e.name + " " + e.surname } })} onChange={(e) => this.onInputChange(e, 'author')} optionLabel="name" placeholder="Select a Author" className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.author })}/>
                         {this.state.submitted && !this.state.Course.author && <small className="p-invalid">Author is required.</small>}
                     </div>
 
                     <div className="p-field">
-                        <label htmlFor="age">Image</label>
-                        <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} onBeforeUpload={e => console.log(e)} />
-                        <InputNumber id="age" value={this.state.Course.age} onValueChange={(e) => this.onAgeChange(e, 'age')} integeronly />
+                        <label htmlFor="email">Course start</label>
+                        <InputMask mask="99/99/9999" value={this.state.Course.dateOfStart} placeholder="dd/mm/yyyy" slotChar="dd/mm/yyyy" onChange={(e) => this.onInputChange(e, 'dateOfStart')} className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.dateOfStart })}></InputMask>
+                        {this.state.submitted && !this.state.Course.dateOfStart && <small className="p-invalid">Date of start is required.</small>}
                     </div>
 
                     <div className="p-field">
-                        <label htmlFor="email">Email</label>
-                        <InputText id="email" value={this.state.Course.email} onChange={(e) => this.onInputChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.email })} />
-                        {this.state.submitted && !this.state.Course.email && <small className="p-invalid">Email is required.</small>}
+                        <label htmlFor="email">Course end</label>
+                        <InputMask mask="99/99/9999" value={this.state.Course.dateOfEnd} placeholder="dd/mm/yyyy" slotChar="dd/mm/yyyy" onChange={(e) => this.onInputChange(e, 'dateOfEnd')} className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.dateOfEnd })}></InputMask>
+                        {this.state.submitted && !this.state.Course.dateOfEnd && <small className="p-invalid">Date of end is required.</small>}
                     </div>
 
+                    <div className="p-field">
+                        <label htmlFor="age">Image</label>
+                        <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} customUpload={true} onSelect={e => {this.imageUrlToBase64(e.files[0].objectURL)}}/>
+                        {this.state.submitted && !this.state.Course.newPhotoBase64 && <small className="p-invalid">Image is required.</small>}
+                    </div>
                 </Dialog>
 
                 <Dialog visible={this.state.deleteCourseDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteCourseDialogFooter} onHide={this.hideDeleteCourseDialog}>

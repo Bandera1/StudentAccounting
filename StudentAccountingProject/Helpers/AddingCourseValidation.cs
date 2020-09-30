@@ -14,15 +14,20 @@ namespace StudentAccountingProject.Helpers
             RuleFor(x => x.Name)
                .Cascade(CascadeMode.StopOnFirstFailure)
                .NotEmpty().WithMessage("{PropertyName} incorrect");
+
             RuleFor(x => x.Description)
               .Cascade(CascadeMode.StopOnFirstFailure)
               .NotEmpty().WithMessage("{PropertyName} incorrect");
+
             RuleFor(x => x.AuthorId)
               .Cascade(CascadeMode.StopOnFirstFailure)
               .NotEmpty().WithMessage("{PropertyName} incorrect");
+
             RuleFor(x => x.DateOfStart)
               .Cascade(CascadeMode.StopOnFirstFailure)
-              .NotEmpty().WithMessage("{PropertyName} incorrect");
+              .NotEmpty()
+              .WithMessage("{PropertyName} incorrect");
+            
             RuleFor(x => x.DateOfEnd)
               .Cascade(CascadeMode.StopOnFirstFailure)
               .NotEmpty().WithMessage("{PropertyName} incorrect");

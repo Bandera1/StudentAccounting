@@ -62,6 +62,11 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                     return "Incorrect user";
                 }
 
+                if(!String.IsNullOrEmpty(ValidateDate(model)))
+                {
+                    return ValidateDate(model);
+                }
+
                 var courseValidator = new AddingCourseValidation();
                 var validationResult = courseValidator.Validate(model);
                 if (validationResult.Errors.Count > 0)
@@ -72,6 +77,20 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                 return String.Empty;
             }
         
+            private string ValidateDate(NewCourseModel model)
+            {
+                if (DateTime.Parse(model.DateOfEnd) < DateTime.Parse(model.DateOfStart))
+                {
+                    return "Incorrect date";
+                } 
+                if(DateTime.Parse(model.DateOfStart) < DateTime.Now)
+                {
+                    return "Incorrect date";
+                }
+
+                return String.Empty;
+            }
+
             private DB.Entities.Course CreateCourse(NewCourseModel model,string photoPath)
             {
                 var newCourse = new DB.Entities.Course
@@ -81,8 +100,8 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                     Rating = 0,
                     AuthorId = model.AuthorId,
                     PhotoPath = photoPath,
-                    DateOfStart = model.DateOfStart,
-                    DateOfEnd = model.DateOfEnd
+                    DateOfStart = DateTime.Parse(model.DateOfStart),
+                    DateOfEnd = DateTime.Parse(model.DateOfEnd)
                 };
 
                 return newCourse;
