@@ -13,8 +13,7 @@ import { GetStudentsCoursesReducer } from '../views/studentsViews/MyCourses/redu
 import { ConfirmEmailReducer } from '../views/othersViews/ConfirmEmail/reducer';
 import { AllStudentsReducer } from '../views/adminViews/AllStudents/reducer';
 import { AllCoursesReducer } from '../views/adminViews/AllCourses/reducer';
-
-
+import { StudentProfileReducer } from '../views/studentsViews/StudentProfile/reducer'
 
 
 // Create browser history to use in the Redux store
@@ -30,6 +29,7 @@ export default function configureStore(history, initialState) {
         confirmEmail: ConfirmEmailReducer,
         AllStudents: AllStudentsReducer,
         AllCourses: AllCoursesReducer,
+        StudentProfile: StudentProfileReducer,
     };
 
     const middleware = [

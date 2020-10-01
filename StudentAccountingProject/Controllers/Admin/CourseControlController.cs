@@ -10,7 +10,7 @@ using StudentAccountingProject.MediatR.Course.Queries;
 
 namespace StudentAccountingProject.Controllers.Admin
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class CourseControlController : ApiController
     {
         [HttpGet("GetCoursesCount")]

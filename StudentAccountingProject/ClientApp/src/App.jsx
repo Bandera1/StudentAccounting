@@ -3,7 +3,10 @@ import { Route, Switch, HashRouter as Router } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 
 
-// import './custom.css'
+// import './custom.css'import 'font-awesome/css/font-awesome.min.css';
+import 'primereact/resources/themes/rhea/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 import 'font-awesome/css/font-awesome.css'
 
 

@@ -7,6 +7,8 @@ import get from 'lodash.get';
 import history from "../../utils/history";
 import { logout } from '../../views/othersViews/LoginPage/reducer';
 import { serverUrl } from '../../config';
+import { Button } from 'reactstrap';
+
 import {
     Collapse,
     Navbar,
@@ -19,8 +21,6 @@ import {
 
 import routes from '../../routes/studentRoutes';
 
-
-// const AdminNavbar = React.lazy(() => import('./AdminNavbar'));
 
 class StudentLayout extends Component {
 
@@ -37,9 +37,7 @@ class StudentLayout extends Component {
     loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
     signOut(e) {
-        // e.preventDefault();
         this.props.logout();
-        // this.props.history.push('/login')
     }
 
     render() {
@@ -72,7 +70,15 @@ class StudentLayout extends Component {
                         <NavItem>
                             <NavLink href="/#/student/courses" onClick={e => { history.push("/#/student/courses"); history.go() }}>All courses</NavLink>
                         </NavItem>                                 
-                    </Nav>                  
+                    </Nav>         
+                    <Nav navbar>
+                        <NavItem>
+                            <NavLink href="/#/student/profile" onClick={e => { history.push("/#/student/profile"); history.go() }}>Profile</NavLink>
+                        </NavItem>       
+                        <NavItem className="ml-2">
+                            <Button color="warning" onClick={e => { this.signOut(); }}>Logout</Button>
+                        </NavItem>           
+                    </Nav>  
                 </Collapse>
             </Navbar>
             <div className="app-body">
