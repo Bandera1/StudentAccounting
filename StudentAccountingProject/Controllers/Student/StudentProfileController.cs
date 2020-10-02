@@ -40,7 +40,7 @@ namespace StudentAccountingProject.Controllers.Student
             command.DTO.Id = studentId;
 
             var result = await Mediator.Send(command);
-            if(!String.IsNullOrEmpty(result.ErrorMessage))
+            if(String.IsNullOrEmpty(result.ErrorMessage))
             {
                 return Ok(result);
             }
@@ -59,7 +59,7 @@ namespace StudentAccountingProject.Controllers.Student
             command.Model.StudentId = studentId;
 
             var result = await Mediator.Send(command);
-            if(!String.IsNullOrEmpty(result.ErrorMessage))
+            if(String.IsNullOrEmpty(result.ErrorMessage))
             {
                 return Ok(result);
             }

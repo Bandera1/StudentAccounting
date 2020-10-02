@@ -29,9 +29,7 @@ class ChangeImage extends Component {
         croppedImage: img,
       },
     );
-    console.log("Image", img);
-    // this.props.changeImage()
-
+    this.props.changeImage(img);
   };
 
   changeImage = (img) => {
@@ -39,32 +37,33 @@ class ChangeImage extends Component {
   };
 
   render() {
-    const { croppedImage }=this.state;
-     
-    let src = croppedImage;
-    if(src.length > 150 || src == '')
-    {
-      src = "/UsersImages" + this.props.getUserImage();
+    const { croppedImage } = this.state;
+
+    let newImage = new Image();
+
+    newImage.src = croppedImage;
+    if (newImage.src.length < 150 || newImage.src == '') {
+      newImage.src = "/UsersImages" + this.props.getUserImage();
     }
 
     return (
       <Card className="p-1 m-4">
-        <CardBody>
+        <CardBody >
           <Form onSubmit={this.onSubmitForm} >
             <Col className="xs-4">
               <CardGroup className="mb-3">
                 <Card>
                   <CardBody>
-                      <img
-                      src={src}
+                      <img style={{maxHeight:"15rem"}}
+                      src={newImage.src}
                  /> 
                  </CardBody>
                 </Card>
               </CardGroup>
             </Col>
             <Row>
-              <Col>
-                <Button color="primary" className="px-5" 
+              <Col style={{width:"100%"}}>
+                <Button color="primary" className="px-5 justify-content-center" 
                 onClick={this.triggerChildInput}>
                   Change image
                 </Button>
@@ -72,7 +71,11 @@ class ChangeImage extends Component {
             </Row>
           </Form>
         </CardBody>
-        <CropperPage ref="cropperPage" getCroppedImage={this.getCroppedImage} changeImage={this.changeImage} isHidden={true} isForAvatar={true} />
+        <CropperPage ref="cropperPage"
+          getCroppedImage={this.getCroppedImage}
+          changeImage={this.changeImage}
+          isHidden={true}
+          isForAvatar={true} />
       </Card>
     );
   }

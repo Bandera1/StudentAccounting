@@ -46,7 +46,8 @@ namespace StudentAccountingProject.DB
                     Name = "Jordan",
                     Surname = "Montana",
                     Age = new Random().Next(18, 56).ToString(),
-                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31))
+                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31)),
+                    PhotoPath = "/1280_default-user.png"
                 };
 
                 var studentProfile = new StudentProfile
@@ -73,7 +74,8 @@ namespace StudentAccountingProject.DB
                     Name = "Black",
                     Surname = "Water",
                     Age = new Random().Next(18, 56).ToString(),
-                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31))
+                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31)),
+                    PhotoPath = "/1280_default-user.png"
                 };
 
                 studentProfile = new StudentProfile
@@ -107,7 +109,8 @@ namespace StudentAccountingProject.DB
                     Name = "Admin",
                     Surname = "Adminovich",
                     Age = new Random().Next(18, 56).ToString(),
-                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31))
+                    RegisterDate = DateTime.Now.AddDays(new Random().Next(5, 31)),
+                    PhotoPath = "/1280_default-user.png"
                 };
 
                 var adminProfile = new AdminProfile
@@ -142,7 +145,8 @@ namespace StudentAccountingProject.DB
                     AuthorId = context.BaseProfiles.Where(x => x.StudentProfile != null).First().Id,
                     DateOfStart = DateTime.Now.AddDays(new Random().Next(1, 25)),
                     DateOfEnd = DateTime.Now.AddDays(new Random().Next(25, 67)),
-                    Rating = new Random().Next(1, 5)
+                    Rating = new Random().Next(1, 5),
+                    PhotoPath = "CoursesImages/1280_default-course.png"
                 });
 
                 courses.Add(new Course
@@ -152,7 +156,8 @@ namespace StudentAccountingProject.DB
                     AuthorId = context.BaseProfiles.Where(x => x.StudentProfile != null).First().Id,
                     DateOfStart = DateTime.Now.AddDays(new Random().Next(1, 25)),
                     DateOfEnd = DateTime.Now.AddDays(new Random().Next(25, 67)),
-                    Rating = new Random().Next(1, 5)
+                    Rating = new Random().Next(1, 5),
+                    PhotoPath = "CoursesImages/1280_default-course.png"
                 });
 
                 courses.Add(new Course
@@ -162,7 +167,8 @@ namespace StudentAccountingProject.DB
                     AuthorId = context.BaseProfiles.Where(x => x.StudentProfile != null).First().Id,
                     DateOfStart = DateTime.Now.AddDays(new Random().Next(1, 25)),
                     DateOfEnd = DateTime.Now.AddDays(new Random().Next(25, 67)),
-                    Rating = new Random().Next(1, 5)
+                    Rating = new Random().Next(1, 5),
+                    PhotoPath = "CoursesImages/1280_default-course.png"
                 });
 
                 courses.Add(new Course
@@ -172,7 +178,8 @@ namespace StudentAccountingProject.DB
                     Author = context.BaseProfiles.Where(x => x.StudentProfile != null).First(),
                     DateOfStart = DateTime.Now.AddDays(new Random().Next(1,25)),
                     DateOfEnd = DateTime.Now.AddDays(new Random().Next(25, 67)),
-                    Rating = new Random().Next(1, 5)
+                    Rating = new Random().Next(1, 5),
+                    PhotoPath = "CoursesImages/1280_default-course.png"
                 });
 
                 courses.Add(new Course
@@ -182,7 +189,8 @@ namespace StudentAccountingProject.DB
                     Author = context.BaseProfiles.Where(x => x.StudentProfile != null).First(),
                     DateOfStart = DateTime.Now.AddDays(new Random().Next(1, 25)),
                     DateOfEnd = DateTime.Now.AddDays(new Random().Next(25, 67)),
-                    Rating = new Random().Next(1, 5)
+                    Rating = new Random().Next(1, 5),
+                    PhotoPath = "CoursesImages/1280_default-course.png"
                 });
 
                 courses.Add(new Course
@@ -202,7 +210,8 @@ namespace StudentAccountingProject.DB
                     Author = context.BaseProfiles.Where(x => x.StudentProfile != null).First(),
                     DateOfStart = DateTime.Now.AddDays(new Random().Next(1, 25)),
                     DateOfEnd = DateTime.Now.AddDays(new Random().Next(25, 67)),
-                    Rating = new Random().Next(1, 5)
+                    Rating = new Random().Next(1, 5),
+                    PhotoPath = "CoursesImages/1280_default-course.png"
                 });
 
                 context.Courses.AddRange(courses);

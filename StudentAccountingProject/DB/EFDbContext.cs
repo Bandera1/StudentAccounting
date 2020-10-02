@@ -60,6 +60,10 @@ namespace StudentAccountingProject.DB
                 .Property(b => b.IsDeleted)
                 .HasDefaultValue(false);
 
+            builder.Entity<BaseProfile>()
+                .Property(b => b.IsFacebookAccount)
+                .HasDefaultValue(false);
+
             builder.Entity<Course>()
                 .HasOne<BaseProfile>(x => x.Author);
         }

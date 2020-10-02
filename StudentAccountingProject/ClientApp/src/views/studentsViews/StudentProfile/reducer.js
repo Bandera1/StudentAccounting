@@ -13,6 +13,12 @@ export const UPDATE_PASSWORD_STARTED = "UPDATE_PASSWORD_STARTED";
 export const UPDATE_PASSWORD_SUCCESS = "UPDATE_PASSWORD_SUCCESS";
 export const UPDATE_PASSWORD_FAILED = "UPDATE_PASSWORD_FAILED";
 
+export const UPDATE_IMAGE_STARTED = "UPDATE_IMAGE_STARTED";
+export const UPDATE_IMAGE_SUCCESS = "UPDATE_IMAGE_SUCCESS";
+export const UPDATE_IMAGE_FAILED = "UPDATE_IMAGE_FAILED";
+
+export const CLEAR_STATE = "CLEAR_STATE";
+
 const initialState = {
     getInfo: {
         loading: false,
@@ -33,7 +39,12 @@ const initialState = {
         failed: false,
         error: ''
     },
-    courses: []
+    updateImage: {
+        loading: false,
+        success: false,
+        failed: false,
+        error: ''
+    }
 };
 
 
@@ -79,6 +90,26 @@ export function UpdatePassword(model) {
     }
 }
 
+export function UpdateImage(model) {
+    return (dispatch) => {
+        dispatch(updateImageListAcions.started());
+        StudentProfileService.UpdateImage(model)
+            .then((response) => {
+                console.log("response", response);
+                dispatch(updateImageListAcions.success(response.data));
+            }, err => { throw err; })
+            .catch(err => {
+                dispatch(updateImageListAcions.failed(err.response));
+            });
+    }
+}
+
+export function ClearState()
+{
+    return (dispatch) => {
+        dispatch(clearStateListActions.clear());
+    }
+}
 
 export const getStudenInfoListAcions = {
     started: () => {
@@ -143,6 +174,34 @@ export const updatePasswordListAcions = {
     }
 }
 
+export const updateImageListAcions = {
+    started: () => {
+        return {
+            type: UPDATE_IMAGE_STARTED
+        }
+    },
+    success: (response) => {
+        return {
+            type: UPDATE_IMAGE_SUCCESS,
+            payload: response
+        }
+    },
+    failed: (error) => {
+        console.error("Error : ", error)
+        return {
+            type: UPDATE_IMAGE_FAILED,
+            errors: error
+        }
+    }
+}
+
+export const clearStateListActions = {
+    clear: () => {
+        return {
+            type: CLEAR_STATE
+        }
+    }
+}
 
 export const StudentProfileReducer = (state = initialState, action) => {
     let newState = state;
@@ -165,7 +224,7 @@ export const StudentProfileReducer = (state = initialState, action) => {
         case GET_INFO_FAILED: {
             newState = update.set(state, "getInfo.loading", false);
             newState = update.set(newState, "getInfo.success", false);
-            newState = update.set(newState, "getInfo.error", action.errors.errorMessage);
+            newState = update.set(newState, "getInfo.error", action.errors.data.errorMessage);
             newState = update.set(newState, "getInfo.failed", true);
             break;
         }
@@ -188,32 +247,62 @@ export const StudentProfileReducer = (state = initialState, action) => {
         case UPDATE_STUDENT_FAILED: {
             newState = update.set(state, "updateStudent.loading", false);
             newState = update.set(newState, "updateStudent.success", false);
-            newState = update.set(newState, "updateStudent.error", action.errors.errorMessage);
+            newState = update.set(newState, "updateStudent.error", action.errors.data.errorMessage);
             newState = update.set(newState, "updateStudent.failed", true);
             break;
         }
 
-        //------------UPDATE STUDENT--------------
-        case UPDATE_STUDENT_STARTED: {
+        //------------UPDATE PASSWORD--------------
+        case UPDATE_PASSWORD_STARTED: {
             newState = update.set(state, "updatePassword.loading", true);
             newState = update.set(newState, "updatePassword.success", false);
             newState = update.set(newState, "updatePassword.error", '');
             newState = update.set(newState, "updatePassword.failed", false);
             break;
         }
-        case UPDATE_STUDENT_SUCCESS: {
+        case UPDATE_PASSWORD_SUCCESS: {
             newState = update.set(state, "updatePassword.loading", false);
             newState = update.set(newState, "updatePassword.failed", false);
             newState = update.set(newState, "updatePassword.success", true);
             newState = update.set(newState, "updatePassword.error", '');
             break;
         }
-        case UPDATE_STUDENT_FAILED: {
+        case UPDATE_PASSWORD_FAILED: {
             newState = update.set(state, "updatePassword.loading", false);
             newState = update.set(newState, "updatePassword.success", false);
             newState = update.set(newState, "updatePassword.error", action.errors.errorMessage);
             newState = update.set(newState, "updatePassword.failed", true);
             break;
+        }
+
+        //------------UPDATE IMAGE--------------
+        // case UPDATE_IMAGE_STARTED: {
+        //     newState = update.set(state, "updateImage.loading", true);
+        //     newState = update.set(newState, "updateImage.success", false);
+        //     newState = update.set(newState, "updateImage.error", '');
+        //     newState = update.set(newState, "updateImage.failed", false);
+        //     break;
+        // }
+        // case UPDATE_IMAGE_SUCCESS: {
+        //     newState = update.set(state, "updateImage.loading", false);
+        //     newState = update.set(newState, "updateImage.failed", false);
+        //     newState = update.set(newState, "updateImage.success", true);
+        //     newState = update.set(newState, "updateImage.error", '');
+        //     break;
+        // }
+        // case UPDATE_IMAGE_FAILED: {
+        //     newState = update.set(state, "updateImage.loading", false);
+        //     newState = update.set(newState, "updateImage.success", false);
+        //     newState = update.set(newState, "updateImage.error", action.errors.errorMessage);
+        //     newState = update.set(newState, "updateImage.failed", true);
+        //     break;
+        // }
+
+        case CLEAR_STATE: {
+            newState = update.set(state, "updateImage.success", false);
+            newState = update.set(newState, "updateImage.failed", false);
+            newState = update.set(newState, "updateStudent.failed", false);
+            newState = update.set(newState, "updateStudent.success", true);
         }
 
         default: {

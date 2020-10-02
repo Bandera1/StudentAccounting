@@ -25,6 +25,7 @@ namespace StudentAccountingProject.DB.Entities
         public DateTime RegisterDate { get; set; }
         public string UserId { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsFacebookAccount { get; set; }
 
         public virtual StudentProfile StudentProfile { get; set; }
         public virtual AdminProfile AdminProfile { get; set; }

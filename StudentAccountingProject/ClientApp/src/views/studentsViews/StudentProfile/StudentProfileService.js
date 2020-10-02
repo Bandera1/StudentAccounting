@@ -11,4 +11,7 @@ export default class StudentProfileService {
     static UpdatePassword(model) {
         return axios.post(`${serverUrl}api/StudentProfile/UpdatePassword`, model)
     };
+    static UpdateImage(model) {
+        return axios.post(`${serverUrl}api/Account/changeImage`, model)
+    };
 }

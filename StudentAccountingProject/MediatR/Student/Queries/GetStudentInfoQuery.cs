@@ -36,6 +36,7 @@ namespace StudentAccountingProject.MediatR.Student.Queries
                     Surname = student.Surname,
                     Email = student.User.Email,
                     Age = student.Age,
+                    IsFacebookAccount = student.IsFacebookAccount
                 });
             }
         }

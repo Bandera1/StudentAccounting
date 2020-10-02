@@ -35,7 +35,7 @@ class ChangePassword extends Component {
         newPassword: newPassword
       };
 
-      // this.props.changePassword(model);
+      this.props.changePassword(model);
     }
     else {
       this.setState({ errorsState });

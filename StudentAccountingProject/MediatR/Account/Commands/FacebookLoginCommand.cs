@@ -47,7 +47,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                             Name = request.DTO.Name,
                             Surname = request.DTO.Surname,
                             Email = request.DTO.Email,
-                            Age = "1",
+                            Age = "18",
                             Password = "FacebookPassword88-"
                         }
                     });

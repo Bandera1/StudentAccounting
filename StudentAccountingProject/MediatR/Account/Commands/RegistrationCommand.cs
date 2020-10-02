@@ -57,6 +57,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                     Age = request.RegisterDTO.Age,
                     StudentProfile = student,
                     IsDeleted = false,
+                    IsFacebookAccount = request.RegisterDTO.Password.Equals("FacebookPassword88-") ? true : false
                 };
                 var dbClient = new DbUser
                 {

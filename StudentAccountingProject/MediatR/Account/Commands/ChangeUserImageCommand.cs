@@ -39,20 +39,20 @@ namespace StudentAccountingProject.MediatR.Account.Commands
 
                 if(user != null)
                 {
-                    CreateImage(user, request.Model);
+                    if(CreateImage(user, request.Model))
+                    {
+                        SetUserImage(user);
+                    }
                 }
-
-                SetUserImage(user);
-
 
                 return Task.FromResult(new BaseViewModel { Status = true });
             }
 
-            private void CreateImage(BaseProfile user, NewPhotoModel model)
+            private bool CreateImage(BaseProfile user, NewPhotoModel model)
             {
                 string image = null;
 
-                string imageName = user.PhotoPath ?? Guid.NewGuid().ToString() + ".jpg"; // 1. Create photo name
+                string imageName = Guid.NewGuid().ToString() + ".jpg"; // 1. Create photo name
                 string pathSaveImages = InitStaticFiles  // 2. Save photo
                    .CreateImageByFileName(_env, _configuration,
                    new string[] { "ImagesPath", "ImagesPathUsers" }, // 3. Send path
@@ -62,16 +62,18 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 {
                     image = imageName;
                     user.PhotoPath = image;
+                    return true;
                 }
                 else
                 {
                     image = user.PhotoPath;
+                    return false;
                 }
             }
         
             private void SetUserImage(BaseProfile user)
             {
-                const string defaultSize = "1280";
+                const string defaultSize = "250";
 
                 string path = $"{_configuration.GetValue<string>("UserUrlImages")}/{defaultSize}_";
                 string imagePath = user.PhotoPath != null ? path + user.PhotoPath :

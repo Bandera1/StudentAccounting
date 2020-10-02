@@ -113,7 +113,6 @@ class CropperPage extends Component {
                         viewMode={1}                        
                         dragMode="move"
                         src={this.state.src}
-                        
                         onInitialized={this.onCropperInit.bind(this)}
                       />
                     ) : (
