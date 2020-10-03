@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import get from 'lodash.get';
 import { logout } from '../../views/othersViews/LoginPage/reducer';
 import history from "../../utils/history";
+import { Button } from 'reactstrap';
 import {
     Collapse,
     Navbar,
@@ -58,13 +59,22 @@ class AdminLayout extends Component {
 
         const content = (<div className="app">
             <Navbar color="dark" dark expand="md">
-                <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/students"); history.go() }}>Students list</NavbarBrand>
-                <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/courses"); history.go() }}>Courses list</NavbarBrand>
-                <NavbarToggler onClick={(e) => { this.navbarToogle() }} />           
-                
-                <Nav className="justify-content-end" style={{ width: "100%" }}>
-                    <NavbarBrand href="/#/" onClick={e => { this.signOut(); }}>Logout</NavbarBrand>
-                </Nav>   
+                <NavbarToggler onClick={(e) => { this.navbarToogle() }} />
+                <Collapse isOpen={this.state.isOpen} navbar>
+                    <Nav className="mr-auto" navbar>
+                        <NavItem>
+                            <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/students"); history.go() }}>Students list</NavbarBrand>
+                        </NavItem>
+                        <NavItem>
+                            <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/courses"); history.go() }}>Courses list</NavbarBrand>                        
+                        </NavItem>
+                    </Nav>
+                    <Nav navbar>
+                        <NavItem className="ml-2">
+                            <Button color="warning" onClick={e => { this.signOut(); }}>Logout</Button>
+                        </NavItem>
+                    </Nav>
+                </Collapse>
             </Navbar>
             <div className="app-body">
                 <main className="main">
