@@ -48,6 +48,8 @@
 
   <ItemGroup>
     <Folder Include="MediatR\Account\Queries\" />
+    <Folder Include="MediatR\Schedule\Commands\" />
+    <Folder Include="MediatR\Schedule\DTO\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 
