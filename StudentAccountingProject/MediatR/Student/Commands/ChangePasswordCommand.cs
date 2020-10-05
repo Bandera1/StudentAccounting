@@ -29,11 +29,10 @@ namespace StudentAccountingProject.MediatR.Student.Commands
 
             public async Task<BaseViewModel> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
             {
-                var student = Context.Users
-                    .Include(x => x.BaseProfile)
-                    .FirstOrDefault(x => !x.BaseProfile.IsDeleted && x.Id == request.Model.StudentId);
+                var student = await UserManager.FindByIdAsync(request.Model.StudentId);
+                var baseProfile = Context.BaseProfiles.FirstOrDefault(x => !x.IsDeleted && x.Id == student.Id);
 
-                if (student == null)
+                if (student == null || baseProfile == null || baseProfile.IsDeleted)
                 {
                     new BaseViewModel
                     {

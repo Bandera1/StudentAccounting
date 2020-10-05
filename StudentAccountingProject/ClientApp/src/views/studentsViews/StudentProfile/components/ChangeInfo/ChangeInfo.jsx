@@ -54,7 +54,7 @@ class ChangeInfo extends Component {
                 <label className="p-float-label m-3 d-flex justify-content-center">Edit fields</label>
                 <span className="p-float-label m-3">
                     <InputText id="float-input" name="Name" type="text" size="30" value={Name} onChange={this.handleChange} />
-                    {Name.length <= 0 ? <label htmlFor="float-input">Name</label> : <div></div>}
+                    {Name <= 0 ? <label htmlFor="float-input">Name</label> : <div></div>}
                 </span>
                 <span className="p-float-label m-3">
                     <InputText id="float-input" name="SurName" type="text" size="30" value={SurName} onChange={this.handleChange} />

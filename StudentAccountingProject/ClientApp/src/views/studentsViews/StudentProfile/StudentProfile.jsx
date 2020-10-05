@@ -48,7 +48,6 @@ class StudentProfile extends Component {
     };
 
     componentWillReceiveProps = (nextProps) => {
-        console.log(nextProps);
         this.setState({
             info: nextProps.courseProfileReducer.getInfo.info,
 
@@ -86,7 +85,6 @@ class StudentProfile extends Component {
                 email: model.NewEmail
             }
         }
-
         if (newPhotoBase64 != '') {
             let newImageModel = {
                 Model: {
@@ -119,10 +117,11 @@ class StudentProfile extends Component {
         if (model.oldPassword != '' && model.newPassword != '') {
             this.setState({
                 password: {
-                    currentPassword: model.oldPassword,
-                    newPassword: model.newPassword
+                    currentPassword: model.myOldPassword,
+                    newPassword: model.myNewPassword
                 }
             })
+            this.props.UpdatePassword(model);
         }
     }
 

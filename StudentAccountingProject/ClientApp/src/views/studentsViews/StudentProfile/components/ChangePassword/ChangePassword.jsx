@@ -17,24 +17,32 @@ class ChangePassword extends Component {
     const { oldPassword, newPassword, confPassword } = this.state;
     let errorsState = {};
    
-    if (oldPassword === '' || newPassword === '' || confPassword === '') {
+    if (oldPassword === '') {
       errorsState.oldPassword = "Enter value";
     }
 
-    console.log(`new password ${newPassword} conf password ${confPassword}`);
-    if (confPassword != newPassword) {
-      errorsState.confPassword = "Passwords do not match";
-    } else {
-      errorsState.confPassword = "";
+    if (newPassword === '') {
+      errorsState.newPassword = "Enter value";
     }
 
-    const isValid = Object.keys(errorsState).length === 0
+    if (confPassword === '') {
+      errorsState.confPassword = "Enter value";
+    }
+
+    if (confPassword != newPassword) {
+      errorsState.confPassword = "Passwords do not match";
+    } 
+
+    const isValid = Object.keys(errorsState).length < 1;
     if (isValid) {
       const model = {
-        oldPassword: oldPassword,
-        newPassword: newPassword
-      };
+        model: {
+          currentPassword: oldPassword,
+          newPassword: newPassword
+        }
+      }
 
+      console.log("UPDATE PASSWORD");
       this.props.changePassword(model);
     }
     else {
@@ -64,7 +72,7 @@ class ChangePassword extends Component {
   render() {
     const { errorsState, errorServer } = this.state;
     return (
-      <form onBlur={this.onSubmitForm} >
+      <form onSubmit={this.onSubmitForm} >
         {!!errorServer ? <div>{errorServer}</div> : ""}
         <label className="p-float-label m-3 d-flex justify-content-center">Change password</label>
         <span className="p-float-label m-3">
@@ -81,7 +89,7 @@ class ChangePassword extends Component {
         <span className="p-float-label  m-3">
           <InputText
             id="float-input"
-            type="text"
+            type="password"
             size="30"
             value={this.state.newPassword}
             onChange={(e) => this.setState({ newPassword: e.target.value })}
@@ -92,7 +100,7 @@ class ChangePassword extends Component {
         <span className="p-float-label  m-3">
           <InputText
             id="float-input"
-            type="text"
+            type="password"
             size="30"
             value={this.state.confPassword}
             onChange={(e) => this.setState({ confPassword: e.target.value })}
@@ -100,7 +108,7 @@ class ChangePassword extends Component {
           {!!errorsState.confPassword ? <div style={{ color: "red" }}>{errorsState.confPassword}</div> : ""}
           <label htmlFor="float-input">Confirm email</label>
         </span>
-        {/* <Button className="p-float-label m-3" label="Change password" icon="pi pi-check" /> */}
+        <Button className="p-float-label m-3" label="Change password" icon="pi pi-check" />
       </form>
     );
   }

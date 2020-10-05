@@ -302,7 +302,7 @@ export const StudentProfileReducer = (state = initialState, action) => {
             newState = update.set(state, "updateImage.success", false);
             newState = update.set(newState, "updateImage.failed", false);
             newState = update.set(newState, "updateStudent.failed", false);
-            newState = update.set(newState, "updateStudent.success", true);
+            newState = update.set(newState, "updateStudent.success", false);
         }
 
         default: {

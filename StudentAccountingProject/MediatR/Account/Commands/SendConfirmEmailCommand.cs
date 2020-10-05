@@ -39,7 +39,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 }
 
                 EmailService emailService = new EmailService();
-                string url = "https://localhost:3008/#/confirm/email" + "/" + "ID=" + user.Id;
+                string url = "https://localhost:44310/#/confirm/email" + "/" + "ID=" + user.Id;
                 string emailHTML = $@"<p>&nbsp;</p>
 <!-- HIDDEN PREHEADER TEXT -->
 <div style=""display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: 'Lato', Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;"">We're thrilled to have you here! Get ready to dive into your new account.</div>
