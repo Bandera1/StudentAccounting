@@ -48,7 +48,7 @@ class ChangeInfo extends Component {
 
     render() {
         const { Name, SurName, Email, Age } = this.state;
-
+        console.warn("STATE",this.state);
         return (
             <form onSubmit={this.onSubmitForm}>
                 <label className="p-float-label m-3 d-flex justify-content-center">Edit fields</label>

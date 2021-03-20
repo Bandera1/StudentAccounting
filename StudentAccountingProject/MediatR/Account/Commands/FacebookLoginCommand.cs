@@ -40,6 +40,7 @@ namespace StudentAccountingProject.MediatR.Account.Commands
                 var searchStudent = Context.Users.FirstOrDefault(x => x.Email == request.DTO.Email);
                 if (searchStudent == null)
                 {
+                   
                     var registerResult = await Mediator.Send(new RegistrationCommand
                     {
                         RegisterDTO = new RegisterDTO

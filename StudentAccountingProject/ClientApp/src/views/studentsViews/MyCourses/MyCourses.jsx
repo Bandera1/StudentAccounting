@@ -34,8 +34,8 @@ class MyCourses extends Component {
     render() { 
         const { isLoading,courses } = this.state;
 
-        const header = (
-            <img style={{ borderRadius: "0.3rem" }} alt="Card" src='https://elearning-reskill.eu/pluginfile.php/99/course/overviewfiles/products-online-courses.png' />
+        const header = (photoPath) => (
+            <img style={{ borderRadius: "0.3rem" }} alt="Card" src={`/${photoPath}`} />
         );
 
         return (
@@ -59,7 +59,7 @@ class MyCourses extends Component {
                                             boxShadow: "5px 3px 13px -3px rgba(0,0,0,0.66)"
                                         }}
                                     // footer={footer(item.id, item.isSubscribe)}
-                                    header={header}>
+                                    header={header(item.photoPath)}>
                                     <p className="p-m-0 " style={{ lineHeight: '1.5' }}>{item.description}</p>
                                     <p className="p-m-0 " style={{ lineHeight: '1.5' }}>
                                         <FontAwesomeIcon icon={faCalendar} />

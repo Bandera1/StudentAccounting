@@ -63,10 +63,10 @@ class AdminLayout extends Component {
                 <Collapse isOpen={this.state.isOpen} navbar>
                     <Nav className="mr-auto" navbar>
                         <NavItem>
-                            <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/students"); history.go() }}>Students list</NavbarBrand>
+                            <NavbarBrand href="/#/admin/students" >Students list</NavbarBrand>
                         </NavItem>
                         <NavItem>
-                            <NavbarBrand href="/#/admin/students" onClick={e => { history.push("/#/admin/courses"); history.go() }}>Courses list</NavbarBrand>                        
+                            <NavbarBrand href="/#/admin/courses" >Courses list</NavbarBrand>                        
                         </NavItem>
                     </Nav>
                     <Nav navbar>

@@ -17,7 +17,7 @@ namespace StudentAccountingProject.Services
             mail.Subject = subject;
             mail.IsBodyHtml = true;
             mail.Body = message;
-            
+
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
             {
                 Credentials = new NetworkCredential("bonvoyagevirus@gmail.com", "bon123456-"),

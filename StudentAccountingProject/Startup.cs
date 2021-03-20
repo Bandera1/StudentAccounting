@@ -66,7 +66,11 @@ namespace StudentAccountingProject
             services.AddScoped<IValidator<BaseProfile>, UserValidator>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("a8f5f167f44f4964e6c998dee827110c"));
-            services.AddIdentity<DbUser, IdentityRole>(options => options.Stores.MaxLengthForKeys = 256)
+            services.AddIdentity<DbUser, IdentityRole>(options =>
+            {
+                options.Stores.MaxLengthForKeys = 256;
+                options.Password.RequiredLength = 6;
+            })
                 .AddEntityFrameworkStores<EFDbContext>()
                 .AddDefaultTokenProviders();
 

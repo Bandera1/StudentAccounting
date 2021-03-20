@@ -12,6 +12,8 @@ import { FileUpload } from 'primereact/fileupload';
 import { Rating } from 'primereact/rating';
 import { Dropdown } from 'primereact/dropdown';
 import { InputMask } from 'primereact/inputmask';
+import { InputTextarea } from 'primereact/inputtextarea';
+
 
 import get from "lodash.get";
 import { connect } from "react-redux";
@@ -482,8 +484,9 @@ class AllCourses extends Component {
 
                     <div className="p-field">
                         <label htmlFor="name">Description</label>
-                        <InputText id="name" value={this.state.Course.description} onChange={(e) => this.onInputChange(e, 'description')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.description })} />
-                        {this.state.submitted && !this.state.Course.description && <small className="p-invalid">Description is required.</small>}
+                        {/* <InputText id="name" value={this.state.Course.description} onChange={(e) => this.onInputChange(e, 'description')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.description })} /> */}
+                        <InputTextarea id="name" value={this.state.Course.description} onChange={(e) => this.onInputChange(e, 'description')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.Course.description })} />{
+                        this.state.submitted && !this.state.Course.description && <small className="p-invalid">Description is required.</small>}
                     </div>
 
                     <div className="p-field">

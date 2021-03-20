@@ -35,6 +35,7 @@ namespace StudentAccountingProject.MediatR.Course.Queries
                         DateOfStart = x.Course.DateOfStart.ToString("dd MMMM yyyy"),
                         DateOfEnd = x.Course.DateOfEnd.ToString("dd MMMM yyyy"),
                         Rating = Convert.ToInt32(x.Course.Rating),
+                        PhotoPath = x.Course.PhotoPath
                     })
                     .ToList();
 

@@ -182,12 +182,15 @@ class StudentProfile extends Component {
                                             </CardGroup>
                                         </Col> :
                                         <div></div>
-                                }                            
-                                <Col>
-                                    <CardGroup>
-                                        <ChangeInfo getInfoFromState={this.getInfoFromState} editStudent={this.editStudent} />
-                                    </CardGroup>
-                                </Col>
+                                }
+                                {!this.state.info.isFacebookAccount && this.state.info.isFacebookAccount !== undefined ?
+                                    <Col>
+                                        <CardGroup>
+                                            <ChangeInfo getInfoFromState={this.getInfoFromState} editStudent={this.editStudent} />
+                                        </CardGroup>
+                                    </Col> :
+                                    <div></div>
+                                }
                             </Row>
                         </Card>
                     </Row>

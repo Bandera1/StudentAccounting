@@ -106,7 +106,7 @@ class ChangePassword extends Component {
             onChange={(e) => this.setState({ confPassword: e.target.value })}
           />
           {!!errorsState.confPassword ? <div style={{ color: "red" }}>{errorsState.confPassword}</div> : ""}
-          <label htmlFor="float-input">Confirm email</label>
+          <label htmlFor="float-input">Confirm password</label>
         </span>
         <Button className="p-float-label m-3" label="Change password" icon="pi pi-check" />
       </form>

@@ -60,20 +60,20 @@ class StudentLayout extends Component {
 
         const content = (<div className="app">
             <Navbar color="dark" dark expand="md">
-                <NavbarBrand href="/#/student/schedule" onClick={e => { history.push("/#/student/schedule");history.go()}}>Schedule</NavbarBrand>
+                <NavbarBrand href="/#/student/schedule">Schedule</NavbarBrand>
                 <NavbarToggler onClick={(e) => { this.navbarToogle() }} />
                 <Collapse isOpen={this.state.isOpen} navbar>
                     <Nav className="mr-auto" navbar>
                         <NavItem>
-                            <NavLink href="/#/student/mycourses" onClick={e => { history.push("/#/student/mycourses"); history.go() }}>My courses</NavLink>
+                            <NavLink href="/#/student/mycourses">My courses</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink href="/#/student/courses" onClick={e => { history.push("/#/student/courses"); history.go() }}>All courses</NavLink>
+                            <NavLink href="/#/student/courses">All courses</NavLink>
                         </NavItem>                                 
                     </Nav>         
                     <Nav navbar>
                         <NavItem>
-                            <NavLink href="/#/student/profile" onClick={e => { history.push("/#/student/profile"); history.go() }}>Profile</NavLink>
+                            <NavLink href="/#/student/profile">Profile</NavLink>
                         </NavItem>       
                         <NavItem className="ml-2">
                             <Button color="warning" onClick={e => { this.signOut(); }}>Logout</Button>

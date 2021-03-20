@@ -97,7 +97,7 @@ namespace StudentAccountingProject.MediatR.Course.Commands
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    Rating = 0,
+                    Rating = new Random().Next(0,5),
                     AuthorId = model.AuthorId,
                     PhotoPath = photoPath,
                     DateOfStart = DateTime.Parse(model.DateOfStart),
